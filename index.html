@@ -1,0 +1,1502 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#102f58">
+  <meta name="description" content="Collaborative angle challenges to solve and represent using a physical circle.">
+  <title>Angles in Action · Geometry Challenges</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #142a45;
+      --muted: #657991;
+      --navy: #102f58;
+      --blue: #1769bb;
+      --blue-bright: #2583db;
+      --sky: #e9f3ff;
+      --paper: #edf3f9;
+      --line: #dce5ee;
+      --white: #fff;
+      --mint: #baf1d9;
+      --gold: #f5c95b;
+      --shadow: 0 18px 48px rgba(21, 52, 88, .13);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; min-height: 100vh; color: var(--ink); background: radial-gradient(ellipse at 35% 0%, #fff 0%, #f6f9fc 34%, var(--paper) 100%); }
+    button, select { font: inherit; }
+    button:focus-visible, select:focus-visible { outline: 3px solid #75bafa; outline-offset: 3px; }
+    .app-shell { min-height: 100vh; padding: 22px clamp(16px, 3vw, 44px) 26px; }
+    .topbar { width: min(1540px, 100%); margin: 0 auto 23px; display: flex; justify-content: space-between; align-items: center; gap: 18px; }
+    .brand { display: flex; align-items: center; gap: 13px; min-width: 0; }
+    .brand-mark { width: 46px; height: 46px; flex: 0 0 auto; display: grid; place-items: center; border: 1px solid #2f77bf; border-radius: 14px; color: white; background: linear-gradient(145deg, #247bc8, #104a86); box-shadow: 0 7px 16px rgba(22, 89, 151, .22); font: 700 27px/1 Georgia, serif; }
+    .brand-copy { min-width: 0; }
+    .brand-copy strong { display: block; color: var(--navy); font-size: 16px; letter-spacing: .025em; }
+    .brand-copy span { display: block; margin-top: 3px; color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+    .top-note { padding: 9px 13px; border: 1px solid #dce7f2; border-radius: 999px; color: #526b84; background: rgba(255,255,255,.76); font-size: 12px; font-weight: 650; white-space: nowrap; }
+    .layout { width: min(1540px, 100%); margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) 318px; gap: 22px; align-items: stretch; }
+    .main-column { min-width: 0; display: flex; flex-direction: column; gap: 17px; }
+    .toolbar { min-height: 76px; display: flex; justify-content: space-between; align-items: center; gap: 18px; padding: 14px 17px 14px 21px; border: 1px solid rgba(205, 219, 233, .9); border-radius: 18px; background: rgba(255,255,255,.84); box-shadow: 0 6px 20px rgba(33,63,94,.045); }
+    .toolbar-intro { min-width: 125px; }
+    .eyebrow { color: #7588a0; font-size: 10px; font-weight: 800; letter-spacing: .17em; text-transform: uppercase; }
+    .toolbar-intro strong { display: block; margin-top: 4px; color: var(--ink); font-size: 16px; }
+    .toolbar-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+    .topic-select { max-width: 238px; min-height: 44px; padding: 0 37px 0 13px; border: 1px solid #d6e1ec; border-radius: 11px; color: #334d69; background: #fff; font-size: 13px; font-weight: 650; cursor: pointer; }
+    .generate-btn { min-height: 46px; display: inline-flex; justify-content: center; align-items: center; gap: 9px; padding: 0 19px; border: 1px solid #155ba5; border-radius: 12px; color: #fff; background: linear-gradient(180deg, #247bc9, #155fae); box-shadow: 0 3px 0 #0e4b89, 0 8px 15px rgba(20, 91, 160, .16); font-size: 14px; font-weight: 750; cursor: pointer; transition: transform .15s ease, filter .15s ease, box-shadow .15s ease; }
+    .generate-btn:hover { filter: brightness(1.06); transform: translateY(-1px); }
+    .generate-btn:active { box-shadow: 0 1px 0 #0e4b89; transform: translateY(2px); }
+    .generate-btn .plus { font-size: 22px; font-weight: 400; line-height: 0; }
+    .exercise-card { position: relative; min-height: 570px; flex: 1; display: flex; flex-direction: column; overflow: hidden; padding: clamp(27px, 4vw, 54px); border: 1px solid #1b528d; border-radius: 25px; color: #fff; background: radial-gradient(ellipse at 84% 8%, rgba(77,151,224,.38), transparent 39%), linear-gradient(145deg, #1b5a9a 0%, #12457e 53%, #0d3769 100%); box-shadow: var(--shadow), inset 0 1px rgba(255,255,255,.16); }
+    .exercise-head, .exercise-stage, .exercise-foot { position: relative; z-index: 1; }
+    .exercise-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .topic-identity { display: inline-flex; align-items: center; gap: 9px; min-width: 0; }
+    .topic-icon { width: 34px; height: 34px; flex: 0 0 34px; display: grid; place-items: center; padding: 0; border: 1px solid rgba(205,232,255,.36); border-radius: 10px; color: #b8e8ff; background: rgba(8,39,75,.38); font-size: 20px; font-weight: 800; cursor: pointer; transition: transform .16s ease, background .16s ease, box-shadow .16s ease; }
+    .topic-icon[data-topic="supplementary"] { color: #ffd28a; }
+    .topic-icon[data-topic="vertex"] { color: #d7c2ff; }
+    .topic-icon[data-topic="straight"] { color: #a8f0d2; }
+    .topic-icon[data-topic="vertical"] { color: #ffcad8; }
+    .topic-icon:hover { transform: translateY(-2px) rotate(-4deg); box-shadow: 0 4px 12px rgba(3,24,48,.24); }
+    .topic-icon.is-answer-visible { border-color: #bbf0d2; color: #effff5; background: linear-gradient(145deg,#31a675,#14734e); box-shadow: 0 0 0 3px rgba(134,234,178,.15); }
+    .topic-pill { min-height: 30px; display: inline-flex; align-items: center; gap: 8px; padding: 0 11px; border: 1px solid rgba(205,232,255,.3); border-radius: 999px; color: #e7f4ff; background: rgba(8,39,75,.24); font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .challenge-count { color: rgba(227,241,255,.7); font: 600 11px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .12em; }
+    .exercise-actions { display: flex; align-items: center; gap: 10px; }
+    .timer-btn { min-height: 30px; display: inline-flex; align-items: center; gap: 7px; padding: 0 10px; border: 1px solid rgba(205,232,255,.34); border-radius: 999px; color: #e7f4ff; background: rgba(8,39,75,.3); font-size: 11px; font-weight: 800; cursor: pointer; transition: background .15s ease, border-color .15s ease, transform .15s ease; }
+    .timer-btn:hover { border-color: rgba(205,232,255,.65); background: rgba(8,39,75,.5); transform: translateY(-1px); }
+    .timer-symbol { font-size: 12px; }
+    .timer-btn.is-running { border-color: #afe2ce; color: #fff; background: rgba(22,112,83,.45); }
+    .timer-btn.is-paused { border-color: #f5d687; color: #ffe8ae; }
+    .timer-btn.is-warning { border-color: #f5c95b; color: #fff0be; background: rgba(138,83,12,.55); animation: timer-warning .85s ease-in-out infinite; }
+    .timer-btn.is-finished { border-color: #f5d687; color: #ffe8ae; background: rgba(121,75,17,.32); animation: timer-finish .65s ease-in-out 2; }
+    .exercise-card.is-formula { border-color: #27825d; background: radial-gradient(ellipse at 84% 8%, rgba(106,214,157,.3), transparent 39%), linear-gradient(145deg, #21865f 0%, #176747 53%, #104b3a 100%); }
+    .exercise-card.is-formula .exercise-kicker { color: #c0f2d6; }
+    .exercise-card.is-formula .teacher-tag { color: #c0f2d6; }
+    .exercise-stage { position: relative; z-index: 1; flex: 1; min-height: 310px; perspective: 1500px; cursor: pointer; outline: none; }
+    .exercise-stage:focus-visible { outline: 2px solid rgba(218,255,234,.92); outline-offset: 3px; border-radius: 16px; }
+    .exercise-flip { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .72s cubic-bezier(.2,.72,.2,1); }
+    .exercise-card.is-formula .exercise-flip { transform: rotateY(180deg); }
+    .exercise-face { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; overflow: auto; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    .exercise-face-front { transform: rotateY(0deg); }
+    .exercise-face-back { padding: 24px 12px; transform: rotateY(180deg); }
+    .exercise-content { width: min(850px, 100%); margin: auto; padding: 42px 0 38px; text-align: center; }
+    .exercise-kicker { margin: 0 0 12px; color: #a7d6ff; font-size: 12px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+    .exercise-title { max-width: 760px; margin: 0 auto; color: #fff; font-size: clamp(30px, 4vw, 51px); line-height: 1.1; letter-spacing: -.045em; text-wrap: balance; }
+    .prompt { max-width: 760px; margin: 22px auto 0; color: rgba(243,249,255,.88); font-size: clamp(16px, 1.65vw, 21px); line-height: 1.65; text-wrap: pretty; }
+    .math-terms { display: flex; justify-content: center; align-items: stretch; flex-wrap: wrap; gap: 10px; margin: 31px auto 0; }
+    .math-term { min-width: 108px; min-height: 72px; display: grid; place-items: center; padding: 10px 19px; border: 1px solid rgba(207,232,255,.46); border-radius: 15px; color: #fff; background: linear-gradient(145deg, rgba(255,255,255,.16), rgba(255,255,255,.07)); box-shadow: inset 0 1px rgba(255,255,255,.1); font: 700 clamp(25px, 3.25vw, 39px)/1.1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: -.06em; font-variant-numeric: lining-nums tabular-nums; }
+    .math-joiner { min-width: 24px; align-self: center; color: rgba(220,238,255,.8); font-size: 21px; font-weight: 500; }
+    .target-rule { width: fit-content; max-width: 100%; margin: 25px auto 0; padding: 10px 15px; border: 1px solid rgba(189,224,255,.22); border-radius: 10px; color: #e6f4ff; background: rgba(3,31,65,.22); font-size: 13px; font-weight: 650; }
+    .target-rule strong { color: #fff; font-weight: 850; }
+    .answer-panel { width: min(690px, 100%); margin: 18px auto 0; padding: 14px 17px; border: 1px solid rgba(180,239,207,.42); border-radius: 13px; color: #f2fff7; background: linear-gradient(145deg,rgba(9,58,52,.72),rgba(7,43,55,.72)); box-shadow: inset 0 1px rgba(255,255,255,.13),0 8px 22px rgba(2,23,43,.13); text-align: left; animation: rise-in .2s ease-out both; }
+    .answer-heading { margin: 0 0 7px; color: #baf1d4; font-size: 10px; font-weight: 850; letter-spacing: .16em; text-transform: uppercase; }
+    .answer-text { margin: 0; color: #fff; font: 650 13px/1.7 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; white-space: pre-line; }
+    .formula-stack { width: min(760px, 100%); margin: auto; text-align: center; }
+    .formula-title { margin: 0; color: #fff; font-size: clamp(27px, 3.2vw, 42px); line-height: 1.12; letter-spacing: -.035em; }
+    .formula-expression { width: fit-content; max-width: 100%; margin: 24px auto 0; padding: 16px 22px; border: 1px solid rgba(219,255,233,.42); border-radius: 15px; color: #fff; background: rgba(4,55,38,.29); box-shadow: inset 0 1px rgba(255,255,255,.11); font: 750 clamp(25px, 3.4vw, 42px)/1.2 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-variant-numeric: lining-nums tabular-nums; }
+    .formula-description { max-width: 650px; margin: 17px auto 0; color: rgba(238,255,245,.9); font-size: clamp(15px, 1.5vw, 19px); line-height: 1.55; }
+    .flip-hint { margin: 17px 0 0; color: rgba(223,245,255,.72); font-size: 11px; font-weight: 650; letter-spacing: .02em; }
+    .exercise-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; padding-top: 19px; border-top: 1px solid rgba(206,231,255,.2); }
+    .physical-note { max-width: 525px; margin: 0; color: rgba(228,242,255,.77); font-size: 13px; line-height: 1.55; }
+    .physical-note strong { color: #fff; }
+    .teacher-tag { flex: 0 0 auto; color: #afe2ce; font-size: 11px; font-weight: 750; letter-spacing: .04em; white-space: nowrap; }
+    .scoreboard { display: flex; flex-direction: column; padding: 19px; border: 1px solid #d9e4ee; border-radius: 21px; background: rgba(255,255,255,.9); box-shadow: 0 9px 30px rgba(27,59,91,.07); }
+    .scoreboard-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 3px 2px 17px; border-bottom: 1px solid #e8edf3; }
+    .scoreboard-head h2 { margin: 0; color: var(--ink); font-size: 16px; letter-spacing: -.015em; }
+    .scoreboard-head p { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+    .match-control { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 13px; padding: 10px 11px; border: 1px solid #d4e2ee; border-radius: 14px; background: linear-gradient(145deg,#fff,#edf5fc); box-shadow: 0 4px 0 #d4e1ed,0 8px 16px rgba(29,61,91,.09),inset 0 1px 0 #fff; }
+    .match-copy { display: flex; flex-direction: column; gap: 3px; }
+    .match-kicker { color: #7188a0; font-size: 8px; font-weight: 850; letter-spacing: .16em; }
+    .match-copy strong { color: #263f5b; font-size: 13px; }
+    .goal-stepper { display: inline-flex; align-items: center; gap: 7px; }
+    .goal-stepper button { width: 30px; height: 30px; display: grid; place-items: center; padding: 0; border: 1px solid #b9cde0; border-radius: 9px; color: #25639e; background: linear-gradient(145deg,#fff,#e5f0fa); box-shadow: 0 3px 0 #c4d5e5,0 5px 9px rgba(39,82,124,.12),inset 0 1px #fff; font-size: 19px; font-weight: 800; cursor: pointer; transition: transform .12s ease,box-shadow .12s ease; }
+    .goal-stepper button:hover:not(:disabled) { transform: translateY(-1px); }
+    .goal-stepper button:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 #c4d5e5; }
+    .goal-stepper button:disabled { cursor: default; opacity: .42; }
+    .goal-value { min-width: 22px; color: #153d65; font: 850 19px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; text-align: center; }
+    .goal-unit { color: #71849a; font-size: 9px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+    .match-status { margin: 12px 0 0; padding: 10px 12px; border: 1px solid #efda9a; border-radius: 12px; color: #70510b; background: linear-gradient(145deg,#fff9e8,#ffefc2); box-shadow: 0 4px 0 #ead89f,0 9px 18px rgba(120,94,28,.1); font-size: 12px; font-weight: 850; text-align: center; }
+    .match-status[hidden] { display: none; }
+    .reset-btn { min-height: 31px; padding: 0 9px; border: 1px solid #e2e9f0; border-radius: 8px; color: #6b7d91; background: #fff; font-size: 10px; font-weight: 700; cursor: pointer; }
+    .reset-btn:hover { border-color: #c7d5e3; color: var(--ink); background: #f7fafe; }
+    .groups-list { display: grid; gap: 12px; padding-top: 15px; }
+    .group-card { --team-color: #247bc9; --team-pale: #e6f3ff; --team-border: #b5d9f7; --team-glow: #cde8ff; position: relative; min-height: 113px; display: grid; grid-template-columns: minmax(0,1fr) 48px; grid-template-rows: auto 1fr; column-gap: 8px; align-items: center; padding: 14px 14px 12px 15px; overflow: hidden; border: 1px solid #e1e9f1; border-left: 4px solid var(--team-color); border-radius: 15px; background: linear-gradient(145deg,#fff 0%,var(--team-pale) 92%); box-shadow: 0 5px 0 var(--team-border),0 11px 18px rgba(32,62,91,.12),inset 0 1px 0 rgba(255,255,255,.98); transform: perspective(900px) rotateX(2deg); transition: border-color .18s ease,transform .18s ease,box-shadow .18s ease,filter .18s ease; }
+    .group-card::before { position: absolute; top: 0; right: 0; width: 74px; height: 74px; border-radius: 0 14px 0 0; background: radial-gradient(circle at 100% 0%,var(--team-glow),transparent 72%); content: ""; pointer-events: none; }
+    .group-card[data-team="0"] { --team-color: #247bc9; --team-pale: #e6f3ff; --team-border: #b5d9f7; --team-glow: #cde8ff; }
+    .group-card[data-team="1"] { --team-color: #c64e53; --team-pale: #fff0f0; --team-border: #efc0c2; --team-glow: #ffdddd; }
+    .group-card[data-team="2"] { --team-color: #7455b5; --team-pale: #f2edff; --team-border: #d1c3f0; --team-glow: #e3d9ff; }
+    .group-card[data-team="3"] { --team-color: #15805b; --team-pale: #e8f8f0; --team-border: #b4e0cb; --team-glow: #d0f1df; }
+    .group-card:hover { transform: perspective(900px) translateY(-3px) rotateX(2deg); box-shadow: 0 8px 0 var(--team-border),0 16px 24px rgba(32,62,91,.16),inset 0 1px 0 #fff; }
+    .group-card.is-scored { border-color: var(--team-color); box-shadow: 0 0 0 3px color-mix(in srgb,var(--team-color) 15%,transparent),0 6px 0 var(--team-border),0 13px 21px rgba(32,62,91,.14); transform: perspective(900px) translateY(-2px) rotateX(1deg); }
+    .group-card.is-scored::after { position: absolute; top: 10px; right: 62px; color: var(--team-color); content: "+1"; font-size: 14px; font-weight: 900; animation: point-float .72s ease-out both; pointer-events: none; }
+    .group-card.is-winner { border-color: #dcb849; border-left-color: #c79416; background: linear-gradient(145deg,#fffef8,#fff2c8); box-shadow: 0 0 0 2px rgba(244,203,88,.36),0 7px 0 #e3cb83,0 16px 28px rgba(155,119,27,.21),inset 0 1px 0 #fff; transform: perspective(900px) translateY(-4px) rotateX(2deg); }
+    .group-card.is-locked:not(.is-winner) { opacity: .62; filter: saturate(.58); }
+    .group-name { position: relative; z-index: 1; grid-column: 1; color: #425a73; font-size: 12px; font-weight: 800; }
+    .group-name::before { display: inline-block; width: 8px; height: 8px; margin-right: 7px; border-radius: 50%; background: var(--team-color); content: ""; vertical-align: 1px; }
+    .group-score { position: relative; z-index: 1; grid-column: 1; align-self: end; margin-top: 6px; color: var(--team-color); font: 750 31px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-variant-numeric: tabular-nums; }
+    .group-score.is-bumping { animation: score-pop .55s cubic-bezier(.18,.8,.28,1.25) both; }
+    .group-score small { margin-left: 6px; color: #7d8da0; font: 650 10px/1 system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase; }
+    .score-btn { position: relative; z-index: 1; width: 42px; height: 42px; grid-column: 2; grid-row: 1 / span 2; align-self: center; display: grid; place-items: center; border: 1px solid var(--team-border); border-radius: 13px; color: var(--team-color); background: linear-gradient(145deg,#fff,var(--team-pale)); box-shadow: 0 4px 0 var(--team-border),0 7px 12px rgba(34,67,98,.13),inset 0 1px 0 #fff; font-size: 23px; font-weight: 750; cursor: pointer; transform: translateY(-1px); transition: transform .12s ease,background .12s ease,box-shadow .12s ease; }
+    .score-btn:hover:not(:disabled) { filter: brightness(.98); transform: translateY(-3px) rotateX(5deg); }
+    .score-btn.is-hit { animation: button-pop .58s cubic-bezier(.18,.8,.28,1.25) both; }
+    .score-btn:active:not(:disabled) { box-shadow: 0 1px 0 var(--team-border); transform: translateY(2px); }
+    .score-btn:disabled { cursor: default; opacity: .56; }
+    .score-btn.is-winner { border-color: #e4c05d; color: #98700b; background: linear-gradient(145deg,#fffef5,#ffefbd); box-shadow: 0 4px 0 #dfc46e,0 8px 14px rgba(129,96,15,.18),inset 0 1px #fff; opacity: 1; }
+    .score-help { margin: auto 2px 0; padding-top: 15px; color: #71849a; font-size: 11px; line-height: 1.5; }
+    .footer-credit { text-align: center; font-size: 10px; font-weight: 750; letter-spacing: .025em; }
+    .pinata-burst { position: absolute; inset: 0; z-index: 3; overflow: hidden; pointer-events: none; }
+    .confetti-piece { position: absolute; top: 50%; left: 50%; width: 8px; height: 12px; border-radius: 2px; opacity: 0; animation: pinata-pop .95s cubic-bezier(.1,.7,.2,1) both; }
+    .confetti-piece:nth-child(5n+1) { background: #f3b63f; }
+    .confetti-piece:nth-child(5n+2) { background: #e85972; }
+    .confetti-piece:nth-child(5n+3) { background: #37b9c6; }
+    .confetti-piece:nth-child(5n+4) { background: #75bd61; }
+    .confetti-piece:nth-child(5n) { background: #9271d7; }
+    .winner-face { position: absolute; top: 10px; right: 59px; z-index: 4; width: 38px; height: 38px; display: grid; place-items: center; border: 2px solid #fff; border-radius: 50%; background: #fff; box-shadow: 0 3px 12px rgba(25,47,68,.2); font-size: 24px; line-height: 1; pointer-events: none; animation: winner-pop .85s cubic-bezier(.2,.8,.25,1.35) both; }
+    .toast { position: fixed; left: 50%; bottom: 22px; z-index: 5; padding: 11px 16px; border: 1px solid rgba(255,255,255,.24); border-radius: 12px; color: white; background: #123b69; box-shadow: 0 10px 30px rgba(10,35,62,.25); font-size: 13px; font-weight: 700; opacity: 0; pointer-events: none; transform: translate(-50%, 8px); transition: opacity .2s ease, transform .2s ease; }
+    .toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
+    .sr-only { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; white-space: nowrap !important; border: 0 !important; }
+    @keyframes rise-in { from { opacity: .4; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes score-pop { 0% { transform: scale(1); } 42% { transform: scale(1.3); } 72% { transform: scale(.94); } 100% { transform: scale(1); } }
+    @keyframes button-pop { 0% { transform: scale(1); } 38% { transform: scale(1.16) rotate(-5deg); } 70% { transform: scale(.96) rotate(3deg); } 100% { transform: scale(1); } }
+    @keyframes point-float { 0% { opacity: 0; transform: translateY(8px) scale(.8); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(-18px) scale(1.12); } }
+    @keyframes pinata-pop { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.35) rotate(0); } 14% { opacity: 1; } 100% { opacity: 0; transform: translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.65) rotate(var(--spin)); } }
+    @keyframes winner-pop { 0% { opacity: 1; transform: translateY(9px) scale(.35) rotate(-15deg); } 42% { opacity: 1; transform: translateY(-3px) scale(1.28) rotate(5deg); } 70% { transform: scale(.94) rotate(-2deg); } 100% { opacity: 1; transform: scale(1); } }
+    @keyframes timer-finish { 50% { transform: scale(1.06); box-shadow: 0 0 0 4px rgba(245,214,135,.18); } }
+    @keyframes timer-warning { 50% { transform: scale(1.08); box-shadow: 0 0 0 4px rgba(245,201,91,.22); } }
+    .exercise-content.refreshing { animation: rise-in .26s ease-out both; }
+    @media (min-width: 1300px) { .exercise-card { min-height: 640px; } .groups-list { gap: 15px; } .group-card { min-height: 126px; } }
+    @media (max-width: 980px) { .layout { grid-template-columns: minmax(0,1fr) 270px; gap: 15px; } .scoreboard { padding: 15px; } .group-card { min-height: 105px; } .exercise-card { min-height: 540px; } }
+    @media (max-width: 760px) {
+      .app-shell { padding: 16px 14px 22px; }
+      .topbar { margin-bottom: 15px; }
+      .top-note { display: none; }
+      .layout { grid-template-columns: 1fr; }
+      .toolbar { flex-wrap: wrap; align-items: flex-start; padding: 15px; }
+      .toolbar-intro { min-width: 100%; }
+      .toolbar-actions { width: 100%; justify-content: stretch; }
+      .topic-select { max-width: none; min-width: 0; flex: 1; }
+      .generate-btn { flex: 0 0 auto; padding: 0 13px; }
+      .exercise-card { min-height: 520px; padding: 27px 20px 20px; border-radius: 20px; }
+      .exercise-content { padding: 42px 0; }
+      .exercise-title { font-size: clamp(30px, 8vw, 43px); }
+      .prompt { font-size: 16px; }
+      .math-term { min-width: 90px; min-height: 63px; padding: 9px 13px; }
+      .exercise-foot { align-items: flex-start; flex-direction: column; gap: 10px; }
+      .scoreboard { padding: 16px; }
+      .groups-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .group-card { min-height: 104px; }
+      .score-help { margin-top: 14px; }
+    }
+    @media (max-width: 420px) {
+      .exercise-head { flex-wrap: wrap; }
+      .exercise-actions { margin-left: auto; }
+      .brand-mark { width: 40px; height: 40px; }
+      .brand-copy strong { font-size: 14px; }
+      .brand-copy span { font-size: 9px; }
+      .toolbar-actions { align-items: stretch; flex-direction: column; }
+      .topic-select, .generate-btn { width: 100%; max-width: none; min-height: 45px; }
+      .exercise-card { min-height: 505px; }
+      .math-terms { gap: 6px; }
+      .math-term { min-width: 76px; font-size: 24px; }
+      .math-joiner { min-width: 14px; font-size: 16px; }
+      .groups-list { grid-template-columns: 1fr 1fr; }
+      .group-card { grid-template-columns: minmax(0, 1fr) 38px; padding: 12px 10px; }
+      .score-btn { width: 36px; height: 38px; }
+      .match-control { padding: 9px; }
+      .match-copy strong { font-size: 12px; }
+      .goal-stepper { gap: 5px; }
+      .goal-stepper button { width: 28px; height: 29px; }
+      .goal-value { min-width: 20px; font-size: 17px; }
+    }
+    @media (min-width: 761px) and (max-height: 820px) {
+      .app-shell { padding-top: 10px; padding-bottom: 10px; }
+      .topbar { margin-bottom: 10px; }
+      .brand-mark { width: 40px; height: 40px; }
+      .main-column { gap: 12px; }
+      .toolbar { min-height: 62px; padding-top: 9px; padding-bottom: 9px; }
+      .exercise-card { min-height: 480px; padding: 24px 34px; }
+      .exercise-content { padding: 22px 0 18px; }
+      .exercise-kicker { margin-bottom: 8px; }
+      .exercise-title { font-size: clamp(28px, 3.1vw, 42px); }
+      .prompt { margin-top: 14px; font-size: clamp(15px, 1.35vw, 18px); line-height: 1.45; }
+      .math-terms { margin-top: 20px; }
+      .math-term { min-width: 92px; min-height: 60px; padding: 8px 16px; font-size: clamp(22px, 2.8vw, 34px); }
+      .target-rule { margin-top: 16px; padding: 8px 13px; }
+      .exercise-foot { padding-top: 12px; }
+      .physical-note { font-size: 11px; }
+      .scoreboard { padding: 14px; }
+      .scoreboard-head { padding-bottom: 10px; }
+      .groups-list { gap: 8px; padding-top: 10px; }
+      .group-card { min-height: 88px; padding: 10px 12px; }
+      .group-score { font-size: 27px; }
+      .score-help { padding-top: 10px; font-size: 10px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+      .confetti-piece { animation: none !important; opacity: 1 !important; transform: translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) rotate(var(--spin)) scale(.8) !important; }
+      .winner-face { animation: none !important; opacity: 1 !important; transform: scale(1) !important; }
+    }
+
+    /* Premium, soft-color 3D team buttons. */
+    .match-control { align-items: flex-start; flex-direction: column; gap: 9px; }
+    .match-copy strong { line-height: 1.35; }
+    .goal-stepper { align-self: stretch; justify-content: space-between; width: 100%; }
+    .group-card { appearance: none; width: 100%; cursor: pointer; text-align: left; font-family: inherit; border-width: 1px 1px 5px; border-left-width: 5px; border-radius: 17px; box-shadow: 0 6px 0 var(--team-border),0 13px 22px rgba(28,57,88,.14),inset 0 1px 0 rgba(255,255,255,.98),inset 0 -12px 20px rgba(255,255,255,.2); transform: perspective(900px) rotateX(3deg) translateY(-1px); }
+    .group-card:hover:not(:disabled) { transform: perspective(900px) translateY(-4px) rotateX(4deg); box-shadow: 0 9px 0 var(--team-border),0 18px 28px rgba(28,57,88,.2),inset 0 1px 0 #fff; }
+    .group-card:active:not(:disabled) { transform: perspective(900px) translateY(3px) rotateX(0); box-shadow: 0 2px 0 var(--team-border),0 5px 10px rgba(28,57,88,.12),inset 0 1px 0 #fff; }
+    .group-card:focus-visible { outline: 3px solid #75bafa; outline-offset: 4px; }
+    .group-card:disabled { cursor: default; }
+    .group-name { font-size: 12px; letter-spacing: .07em; text-transform: uppercase; }
+    .group-score { font-size: 35px; text-shadow: 0 1px 0 #fff; }
+    .group-action-label { position: absolute; z-index: 1; right: 13px; bottom: 11px; padding: 6px 9px; border: 1px solid var(--team-border); border-radius: 9px; color: var(--team-color); background: rgba(255,255,255,.72); box-shadow: 0 2px 0 var(--team-border),inset 0 1px #fff; font-size: 9px; font-weight: 850; letter-spacing: .07em; text-transform: uppercase; }
+    .group-card.is-winner .group-action-label { color: #98700b; border-color: #e4c05d; background: #fff8de; }
+    @media (max-width: 420px) { .match-control { align-items: stretch; } .group-action-label { right: 9px; bottom: 8px; padding: 5px 6px; font-size: 8px; } }
+
+
+    /* Level selector, side-by-side question/diagram, and compact standard-screen layout. */
+    .exercise-actions { gap: 7px; }
+    .level-selector { display: inline-flex; align-items: center; gap: 4px; padding: 3px; border: 1px solid rgba(205,232,255,.25); border-radius: 999px; background: rgba(5,31,62,.26); }
+    .level-btn { width: 27px; height: 27px; display: grid; place-items: center; padding: 0; border: 1px solid transparent; border-radius: 50%; color: rgba(231,244,255,.78); background: transparent; font-size: 11px; font-weight: 850; cursor: pointer; transition: transform .15s ease, background .15s ease, color .15s ease, box-shadow .15s ease; }
+    .level-btn:hover { transform: translateY(-1px); color: #fff; background: rgba(255,255,255,.12); }
+    .level-btn.is-active { border-color: rgba(202,231,255,.65); color: #123e6b; background: linear-gradient(145deg,#f5fbff,#a9dcff); box-shadow: 0 2px 0 rgba(98,159,207,.56),0 4px 9px rgba(3,24,48,.2),inset 0 1px #fff; }
+    .exercise-content { width: 100%; display: grid; grid-template-columns: minmax(0,1.15fr) minmax(220px,.85fr); align-items: center; gap: clamp(16px,2.1vw,30px); padding: 12px 0; text-align: left; }
+    .exercise-main { min-width: 0; text-align: left; }
+    .exercise-main .exercise-title { margin-left: 0; font-size: clamp(27px,3.2vw,43px); }
+    .exercise-main .prompt { margin: 14px 0 0; font-size: clamp(14px,1.35vw,18px); line-height: 1.5; }
+    .exercise-main .math-terms { justify-content: flex-start; gap: 7px; margin: 17px 0 0; }
+    .exercise-main .math-term { min-width: 78px; min-height: 57px; padding: 8px 12px; font-size: clamp(20px,2.2vw,31px); }
+    .exercise-main .math-joiner { min-width: 17px; font-size: 17px; }
+    .exercise-main .target-rule { margin: 15px 0 0; font-size: 12px; }
+    .exercise-main .answer-panel { max-height: 180px; margin: 13px 0 0; padding: 11px 12px; overflow: auto; }
+    .exercise-main .flip-hint { margin: 12px 0 0; }
+    .diagram-panel { min-width: 0; min-height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 15px 12px 10px; border: 1px solid rgba(188,224,255,.24); border-radius: 19px; background: radial-gradient(ellipse at 50% 44%,rgba(155,215,255,.12),transparent 70%),linear-gradient(150deg,rgba(9,42,79,.58),rgba(7,31,62,.36)); box-shadow: inset 0 1px rgba(255,255,255,.1),0 12px 24px rgba(3,21,44,.12); }
+    .diagram-label { align-self: flex-start; display: flex; align-items: center; gap: 7px; color: rgba(207,233,255,.74); font-size: 9px; font-weight: 850; letter-spacing: .16em; }
+    .diagram-pulse { width: 7px; height: 7px; border-radius: 50%; background: #8de3cb; box-shadow: 0 0 10px #8de3cb; }
+    .exercise-diagram { width: 100%; max-width: 310px; height: auto; min-height: 180px; overflow: visible; }
+    .diagram-caption { max-width: 250px; margin: 0; color: rgba(225,240,255,.66); font-size: 10px; line-height: 1.4; text-align: center; }
+    .answer-steps { display: grid; gap: 7px; }
+    .answer-step { display: grid; grid-template-columns: minmax(0,1fr) minmax(125px,.75fr); gap: 9px; align-items: center; padding: 7px 9px; border: 1px solid rgba(190,238,211,.16); border-radius: 9px; background: rgba(0,28,39,.19); }
+    .step-math { color: #fff; font: 650 12px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; white-space: pre-line; }
+    .step-action { color: #bcebd2; font-size: 10px; line-height: 1.4; }
+    .step-action::before { content: "ACTION · "; color: #82cda8; font-size: 8px; font-weight: 850; letter-spacing: .08em; }
+    .exercise-card { min-height: 0; }
+    @media (min-width: 981px) and (max-height: 900px) {
+      .app-shell { padding-top: 10px; padding-bottom: 12px; }
+      .topbar { margin-bottom: 11px; }
+      .main-column { gap: 12px; }
+      .toolbar { min-height: 62px; padding-top: 8px; padding-bottom: 8px; }
+      .exercise-card { min-height: clamp(450px,calc(100vh - 300px),560px); padding: clamp(18px,2vw,30px); }
+      .exercise-stage { min-height: 330px; }
+      .exercise-content { gap: 18px; padding: 7px 0; }
+      .exercise-main .exercise-kicker { margin-bottom: 7px; font-size: 10px; }
+      .exercise-main .exercise-title { font-size: clamp(25px,2.65vw,36px); }
+      .exercise-main .prompt { margin-top: 10px; font-size: clamp(13px,1.15vw,16px); line-height: 1.42; }
+      .exercise-main .math-terms { margin-top: 12px; }
+      .exercise-main .math-term { min-width: 68px; min-height: 48px; font-size: clamp(19px,1.8vw,27px); }
+      .exercise-main .target-rule { margin-top: 11px; padding: 7px 10px; }
+      .diagram-panel { min-height: 235px; padding: 12px 10px 8px; }
+      .exercise-diagram { min-height: 165px; max-height: 215px; }
+      .exercise-foot { padding-top: 11px; }
+      .physical-note { font-size: 11px; }
+    }
+    @media (max-width: 760px) {
+      .exercise-content { grid-template-columns: minmax(0,1fr); gap: 14px; padding: 16px 0; }
+      .exercise-main .exercise-title { font-size: clamp(27px,7vw,40px); }
+      .diagram-panel { min-height: 190px; }
+      .exercise-diagram { max-width: 280px; min-height: 150px; max-height: 190px; }
+      .exercise-actions { flex-wrap: wrap; }
+      .answer-step { grid-template-columns: 1fr; gap: 3px; }
+      .answer-step .step-action { padding-left: 1px; }
+    }
+    @media (max-width: 420px) {
+      .exercise-actions { width: 100%; justify-content: space-between; }
+      .level-btn { width: 25px; height: 25px; }
+      .diagram-panel { min-height: 175px; }
+    }
+
+
+    .exercise-foot-copy { min-width:0; display:flex; flex:1; align-items:center; gap:12px; }
+    .exercise-foot-copy .physical-note { flex:1; }
+    .expand-btn { width:42px; height:42px; flex:0 0 42px; display:grid; place-items:center; padding:0; border:1px solid rgba(205,232,255,.42); border-radius:12px; color:#e8f6ff; background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.07)); box-shadow:0 3px 0 rgba(4,31,61,.4),inset 0 1px rgba(255,255,255,.16); cursor:pointer; transition:transform .15s ease,background .15s ease,box-shadow .15s ease; }
+    .expand-btn:hover { transform:translateY(-2px); background:rgba(255,255,255,.19); box-shadow:0 5px 0 rgba(4,31,61,.34),0 9px 18px rgba(0,18,41,.2); }
+    .expand-btn:active { transform:translateY(1px); box-shadow:0 1px 0 rgba(4,31,61,.4); }
+    .expand-btn:focus-visible { outline:3px solid #8acbff; outline-offset:3px; }
+    .expand-mark { width:21px; height:21px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+    body.has-expanded-exercise { overflow:hidden; }
+    .exercise-card.is-expanded { position:fixed; inset:0; z-index:9999; width:100vw; height:100vh; height:100dvh; max-height:100dvh; min-height:100dvh; margin:0; padding:clamp(22px,4vh,52px) clamp(22px,5vw,76px); overflow:auto; border-radius:0; display:flex; }
+    .exercise-card.is-expanded .exercise-head,.exercise-card.is-expanded .exercise-foot { flex:0 0 auto; }
+    .exercise-card.is-expanded .exercise-stage { min-height:0; flex:1 1 auto; }
+    .exercise-card.is-expanded .exercise-content { width:min(1500px,100%); grid-template-columns:minmax(0,1.2fr) minmax(320px,.8fr); gap:clamp(30px,5vw,80px); padding:22px 0; }
+    .exercise-card.is-expanded .exercise-main .exercise-kicker { font-size:clamp(12px,1.2vw,17px); }
+    .exercise-card.is-expanded .exercise-main .exercise-title { max-width:900px; font-size:clamp(40px,5vw,74px); }
+    .exercise-card.is-expanded .exercise-main .prompt { max-width:860px; margin-top:24px; font-size:clamp(20px,2vw,30px); line-height:1.55; }
+    .exercise-card.is-expanded .exercise-main .math-terms { gap:14px; margin-top:32px; }
+    .exercise-card.is-expanded .exercise-main .math-term { min-width:110px; min-height:82px; font-size:clamp(29px,3.5vw,48px); }
+    .exercise-card.is-expanded .exercise-main .math-joiner { font-size:26px; }
+    .exercise-card.is-expanded .exercise-main .target-rule { margin-top:27px; padding:14px 20px; font-size:17px; }
+    .exercise-card.is-expanded .diagram-panel { min-height:min(58vh,620px); padding:24px; }
+    .exercise-card.is-expanded .exercise-diagram { width:min(100%,520px); min-height:320px; max-height:55vh; }
+    .exercise-card.is-expanded .diagram-label { font-size:12px; }
+    .exercise-card.is-expanded .diagram-caption { max-width:400px; font-size:13px; }
+    .exercise-card.is-expanded .formula-stack { width:min(1150px,100%); }
+    .exercise-card.is-expanded .formula-title { font-size:clamp(40px,5vw,72px); }
+    .exercise-card.is-expanded .formula-expression { margin-top:42px; padding:25px 36px; font-size:clamp(38px,5vw,68px); }
+    .exercise-card.is-expanded .formula-description { max-width:950px; margin-top:30px; font-size:clamp(21px,2.1vw,30px); }
+    .exercise-card.is-expanded .flip-hint { margin-top:30px; font-size:14px; }
+    .exercise-card.is-expanded .answer-panel { max-height:32vh; }
+    .exercise-card.is-expanded .step-math { font-size:15px; }
+    .exercise-card.is-expanded .step-action { font-size:13px; }
+    .exercise-card.is-expanded .expand-btn { width:50px; height:50px; flex-basis:50px; }
+    .exercise-card.is-expanded .expand-mark { width:25px; height:25px; }
+    @media (max-width:760px) {
+      .exercise-foot-copy { align-items:flex-start; }
+      .exercise-card.is-expanded { padding:18px 16px 20px; }
+      .exercise-card.is-expanded .exercise-stage { min-height:0; }
+      .exercise-card.is-expanded .exercise-content { grid-template-columns:minmax(0,1fr); gap:18px; }
+      .exercise-card.is-expanded .exercise-main .exercise-title { font-size:clamp(34px,9vw,52px); }
+      .exercise-card.is-expanded .exercise-main .prompt { font-size:18px; }
+      .exercise-card.is-expanded .diagram-panel { min-height:230px; }
+      .exercise-card.is-expanded .exercise-diagram { min-height:170px; max-height:260px; }
+      .exercise-card.is-expanded .exercise-foot { align-items:flex-start; flex-direction:column; }
+      .exercise-card.is-expanded .teacher-tag { white-space:normal; }
+    }
+
+
+    /* Give the illustration and every expanded-card element more visual room. */
+    .exercise-card.is-expanded .exercise-content { grid-template-columns:minmax(0,1.05fr) minmax(380px,.95fr); gap:clamp(32px,5vw,88px); }
+    .exercise-card.is-expanded .diagram-panel { min-height:min(68vh,700px); padding:clamp(24px,3vw,42px); }
+    .exercise-card.is-expanded .exercise-diagram { width:min(100%,700px); min-height:min(56vh,470px); max-height:66vh; }
+    .exercise-card.is-expanded .diagram-label { font-size:13px; }
+    .exercise-card.is-expanded .diagram-caption { max-width:520px; font-size:15px; line-height:1.55; }
+    .exercise-card.is-expanded .answer-panel { max-height:38vh; padding:18px 20px; }
+    .exercise-card.is-expanded .answer-step { padding:10px 12px; gap:14px; }
+    .exercise-card.is-expanded .step-math { font-size:17px; }
+    .exercise-card.is-expanded .step-action { font-size:14px; }
+    @media (max-width:760px) {
+      .exercise-card.is-expanded .exercise-content { grid-template-columns:minmax(0,1fr); }
+      .exercise-card.is-expanded .diagram-panel { min-height:300px; }
+      .exercise-card.is-expanded .exercise-diagram { width:min(100%,520px); min-height:230px; max-height:38vh; }
+    }
+
+
+    /* Answer pop-up: MathJax notation, balanced steps, and expansion-aware sizing. */
+    .exercise-foot-copy { flex-direction:row; }
+    .exercise-foot-copy .expand-btn { order:0; }
+    .exercise-foot-copy .physical-note { order:1; }
+    .answer-dialog { width:min(820px,calc(100vw - 30px)); max-width:none; max-height:min(84vh,900px); margin:auto; padding:0; overflow:hidden; border:1px solid rgba(183,224,255,.56); border-radius:22px; color:#eff8ff; background:radial-gradient(ellipse at 90% 0%,rgba(97,164,224,.27),transparent 44%),linear-gradient(145deg,#164c83,#0b2e55); box-shadow:0 0 0 100vmax rgba(4,17,34,.68),0 28px 90px rgba(0,16,37,.52),inset 0 1px rgba(255,255,255,.17); }
+    .answer-dialog::backdrop { background:rgba(4,17,34,.72); backdrop-filter:blur(8px); }
+    .answer-dialog-content { max-height:min(84vh,900px); display:flex; flex-direction:column; gap:14px; padding:clamp(18px,3vw,30px); overflow-y:auto; }
+    .answer-dialog-head { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; padding-bottom:13px; border-bottom:1px solid rgba(213,237,255,.19); }
+    .answer-dialog-kicker { margin:0 0 5px; color:#9bd3ff; font-size:9px; font-weight:850; letter-spacing:.17em; }
+    .answer-dialog-head h2 { margin:0; color:#fff; font-size:clamp(22px,3vw,31px); letter-spacing:-.025em; }
+    .answer-close { width:38px; height:38px; flex:0 0 38px; border:1px solid rgba(219,239,255,.28); border-radius:12px; color:#fff; background:rgba(255,255,255,.1); font-size:25px; line-height:1; cursor:pointer; }
+    .answer-close:hover { background:rgba(255,255,255,.2); }
+    .answer-steps { display:grid; gap:8px; }
+    .answer-dialog .answer-step { grid-template-columns:minmax(0,1.1fr) minmax(180px,.9fr); padding:11px 13px; border-color:rgba(180,239,207,.25); background:rgba(0,22,44,.26); }
+    .answer-dialog .step-math { color:#fff; font-size:14px; line-height:1.6; }
+    .answer-dialog .step-action { color:#c5f2d9; font-size:12px; }
+    .answer-dialog mjx-container { color:#fff !important; }
+    .answer-dialog-note { margin:0; color:rgba(217,239,255,.65); font-size:10px; line-height:1.5; }
+    .exercise-card.is-expanded { overflow:hidden; }
+    .exercise-card.is-expanded .exercise-stage { min-height:0; overflow:hidden; }
+    .exercise-card.is-expanded .exercise-face { overflow:hidden; }
+    .exercise-card.is-expanded .exercise-content { height:100%; max-height:100%; grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr); align-content:center; }
+    .exercise-card.is-expanded .diagram-panel { width:fit-content; max-width:100%; min-height:0; height:fit-content; max-height:60vh; justify-self:center; padding:clamp(10px,1.5vh,18px); }
+    .exercise-card.is-expanded .exercise-diagram { display:block; width:min(100%,min(58vh,760px)); height:auto; min-height:0; max-height:56vh; }
+    .exercise-card.is-expanded .diagram-caption { margin-top:4px; }
+    .exercise-card.is-expanded .answer-dialog { width:min(1100px,calc(100vw - 48px)); max-height:88vh; }
+    .exercise-card.is-expanded .answer-dialog-content { max-height:88vh; padding:clamp(24px,4vh,44px) clamp(26px,4vw,52px); gap:18px; }
+    .exercise-card.is-expanded .answer-dialog-head h2 { font-size:clamp(30px,3.4vw,42px); }
+    .exercise-card.is-expanded .answer-dialog .answer-step { padding:15px 17px; gap:20px; }
+    .exercise-card.is-expanded .answer-dialog .step-math { font-size:clamp(17px,1.55vw,22px); }
+    .exercise-card.is-expanded .answer-dialog .step-action { font-size:clamp(14px,1.25vw,18px); }
+    .exercise-card.is-expanded .answer-dialog-note { font-size:13px; }
+    @media (max-width:760px) {
+      .exercise-foot-copy { align-items:flex-start; }
+      .exercise-card.is-expanded { overflow-y:auto; }
+      .exercise-card.is-expanded .exercise-face { overflow:visible; }
+      .exercise-card.is-expanded .exercise-content { height:auto; max-height:none; }
+      .exercise-card.is-expanded .diagram-panel { width:100%; max-height:none; }
+      .exercise-card.is-expanded .exercise-diagram { width:min(100%,520px); max-height:42vh; }
+      .answer-dialog .answer-step { grid-template-columns:1fr; gap:4px; }
+      .exercise-card.is-expanded .answer-dialog { width:calc(100vw - 24px); }
+    }
+
+
+    .expanded-generate-btn { display:none; width:32px; height:32px; flex:0 0 32px; place-items:center; padding:0; border:1px solid rgba(195,229,255,.48); border-radius:10px; color:#e9f7ff; background:linear-gradient(145deg,rgba(255,255,255,.16),rgba(255,255,255,.06)); box-shadow:0 3px 0 rgba(4,31,61,.38),inset 0 1px rgba(255,255,255,.16); cursor:pointer; transition:transform .15s ease,background .15s ease; }
+    .expanded-generate-btn svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+    .expanded-generate-btn:hover { transform:translateY(-2px); background:rgba(255,255,255,.2); }
+    .exercise-card.is-expanded .expanded-generate-btn { display:grid; }
+    .exercise-card.is-expanded .exercise-content { grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+    .exercise-card.is-expanded .diagram-panel { min-height:0; height:fit-content; max-height:none; padding:clamp(10px,1.5vh,18px); }
+    .exercise-card.is-expanded .exercise-diagram { width:min(100%,min(65vh,760px)); height:auto; min-height:0; max-height:none; }
+    .answer-dialog { box-shadow:0 28px 90px rgba(0,16,37,.62),inset 0 1px rgba(255,255,255,.17); }
+    .answer-dialog::backdrop { background:rgba(2,14,30,.78); backdrop-filter:blur(9px); }
+    @media (max-width:760px) {
+      .exercise-card.is-expanded .exercise-content { grid-template-columns:minmax(0,1fr); }
+      .exercise-card.is-expanded .exercise-diagram { width:min(100%,520px); max-height:42vh; }
+    }
+
+
+
+    /* Distinct, tactile micro-interactions for each control. */
+    .generate-btn:active,.expanded-generate-btn:active,.topic-icon:active,.timer-btn:active,.answer-close:active,.reset-btn:active { transform:translateY(2px) scale(.97); }
+    .level-btn { --tap-color:#86d5ff; }
+    .level-btn[data-level="2"] { --tap-color:#ccb6ff; }
+    .level-btn[data-level="3"] { --tap-color:#ffd18a; }
+    .level-btn.fx-level { animation:level-tap .5s cubic-bezier(.2,.75,.25,1.2); }
+    .generate-btn.fx-generate .plus,.expanded-generate-btn.fx-generate svg { animation:generate-spin .56s cubic-bezier(.2,.75,.25,1.2); }
+    .timer-btn.fx-timer { animation:timer-tap .52s ease-out; }
+    .topic-icon.fx-answer { animation:answer-tap .52s cubic-bezier(.2,.75,.25,1.2); }
+    .expand-btn.fx-expand .expand-mark { animation:expand-spin .52s cubic-bezier(.2,.75,.25,1.2); }
+    .expanded-generate-btn.fx-generate,.expand-btn.fx-expand { filter:drop-shadow(0 0 8px rgba(129,213,255,.72)); }
+    .reset-btn.fx-reset { animation:reset-shake .5s ease-in-out; }
+    #goalUp.fx-goal-up { animation:goal-up .45s cubic-bezier(.2,.75,.25,1.2); }
+    #goalDown.fx-goal-down { animation:goal-down .45s cubic-bezier(.2,.75,.25,1.2); }
+    .answer-close.fx-close { animation:close-snap .32s ease-in both; }
+    .exercise-stage.fx-flip { animation:formula-glow .62s ease-out; }
+    #topicSelect.fx-topic-select { animation:select-tap .38s ease-out; }
+    .group-card.fx-team { animation:team-score-tap .58s cubic-bezier(.16,.8,.25,1.2); }
+    .goal-stepper button:active:not(:disabled) { filter:brightness(.93) saturate(1.18); }
+    .answer-close { transition:transform .16s ease,background .16s ease; }
+    .answer-close:active { transform:rotate(90deg) scale(.88); }
+    @keyframes level-tap { 0%{transform:scale(.82)} 48%{transform:scale(1.22);filter:drop-shadow(0 0 6px var(--tap-color))} 100%{transform:scale(1)} }
+    @keyframes generate-spin { 0%{transform:rotate(0) scale(.8)} 65%{transform:rotate(210deg) scale(1.2)} 100%{transform:rotate(360deg) scale(1)} }
+    @keyframes timer-tap { 0%{transform:scale(1)} 35%{transform:scale(1.16)} 65%{transform:scale(.94)} 100%{transform:scale(1)} }
+    @keyframes answer-tap { 0%{transform:rotate(0) scale(1)} 45%{transform:rotate(-18deg) scale(1.2);filter:drop-shadow(0 0 7px rgba(134,234,178,.75))} 100%{transform:rotate(0) scale(1)} }
+    @keyframes expand-spin { 0%{transform:rotate(0) scale(.85)} 60%{transform:rotate(180deg) scale(1.2)} 100%{transform:rotate(360deg) scale(1)} }
+    @keyframes reset-shake { 0%,100%{transform:translateX(0)} 22%{transform:translateX(-4px) rotate(-2deg)} 48%{transform:translateX(4px) rotate(2deg)} 72%{transform:translateX(-2px)} }
+    @keyframes goal-up { 0%{transform:translateY(0)} 45%{transform:translateY(-5px) scale(1.12)} 100%{transform:translateY(0)} }
+    @keyframes goal-down { 0%{transform:translateY(0)} 45%{transform:translateY(5px) scale(.9)} 100%{transform:translateY(0)} }
+    @keyframes close-snap { 0%{transform:rotate(0) scale(1)} 70%{transform:rotate(110deg) scale(.76)} 100%{transform:rotate(90deg) scale(.9)} }
+    @keyframes formula-glow { 0%{filter:brightness(1)} 40%{filter:brightness(1.17) drop-shadow(0 0 10px rgba(155,255,202,.38))} 100%{filter:brightness(1)} }
+    @keyframes select-tap { 0%{transform:scale(1)} 45%{transform:scale(1.025);filter:drop-shadow(0 0 5px rgba(93,192,255,.5))} 100%{transform:scale(1)} }
+    @keyframes team-score-tap { 0%{transform:translateY(0) scale(1)} 38%{transform:translateY(-5px) scale(1.025)} 72%{transform:translateY(2px) scale(.99)} 100%{transform:translateY(0) scale(1)} }
+
+
+    .level-btn.fx-level[data-level="1"] { animation:level-one-tap .5s cubic-bezier(.2,.75,.25,1.2); }
+    .level-btn.fx-level[data-level="2"] { animation:level-two-tap .54s cubic-bezier(.2,.75,.25,1.2); }
+    .level-btn.fx-level[data-level="3"] { animation:level-three-tap .58s cubic-bezier(.2,.75,.25,1.2); }
+    .group-card.fx-team[data-team="0"] { animation:team-blue-tap .58s cubic-bezier(.16,.8,.25,1.2); }
+    .group-card.fx-team[data-team="1"] { animation:team-red-tap .58s cubic-bezier(.16,.8,.25,1.2); }
+    .group-card.fx-team[data-team="2"] { animation:team-purple-tap .58s cubic-bezier(.16,.8,.25,1.2); }
+    .group-card.fx-team[data-team="3"] { animation:team-green-tap .58s cubic-bezier(.16,.8,.25,1.2); }
+    @keyframes level-one-tap { 0%{transform:scale(.82)} 45%{transform:scale(1.24);filter:drop-shadow(0 0 7px #86d5ff)} 100%{transform:scale(1)} }
+    @keyframes level-two-tap { 0%{transform:rotate(0) scale(1)} 35%{transform:rotate(-12deg) scale(1.14)} 68%{transform:rotate(7deg) scale(1.08);filter:drop-shadow(0 0 7px #ccb6ff)} 100%{transform:rotate(0) scale(1)} }
+    @keyframes level-three-tap { 0%{transform:scale(.9)} 38%{transform:scale(1.25) rotate(8deg);filter:drop-shadow(0 0 8px #ffd18a)} 70%{transform:scale(.96) rotate(-3deg)} 100%{transform:scale(1) rotate(0)} }
+    @keyframes team-blue-tap { 0%{transform:translateY(0) scale(1)} 42%{transform:translateY(-7px) scale(1.035)} 72%{transform:translateY(2px) scale(.99)} 100%{transform:translateY(0) scale(1)} }
+    @keyframes team-red-tap { 0%,100%{transform:translateX(0) rotate(0)} 28%{transform:translateX(-4px) rotate(-.7deg)} 56%{transform:translateX(4px) rotate(.7deg)} 78%{transform:translateX(-2px)} }
+    @keyframes team-purple-tap { 0%{transform:scale(1)} 42%{transform:scale(1.045) rotateY(5deg)} 72%{transform:scale(.985) rotateY(-2deg)} 100%{transform:scale(1) rotateY(0)} }
+    @keyframes team-green-tap { 0%{transform:translateY(0) scale(1)} 38%{transform:translateY(-4px) scale(1.02) rotate(.6deg)} 68%{transform:translateY(2px) scale(.98) rotate(-.4deg)} 100%{transform:translateY(0) scale(1) rotate(0)} }
+
+  </style>
+  <script>window.MathJax = { tex: { inlineMath: [['\\(', '\\)']] }, startup: { typeset: false } };</script>
+  <script defer id="mathjaxScript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand" aria-label="Angles in Action">
+        <span class="brand-mark" aria-hidden="true">∠</span>
+        <div class="brand-copy"><strong>ANGLES IN ACTION</strong><span>Geometry Challenges</span></div>
+      </div>
+      <div class="top-note">Solve · Represent · Explain</div>
+    </header>
+
+    <main class="layout">
+      <section class="main-column" aria-label="Exercise generator">
+        <div class="toolbar">
+          <div class="toolbar-intro"><span class="eyebrow">Group challenge</span><strong>What will you construct today?</strong></div>
+          <div class="toolbar-actions">
+            <label class="sr-only" for="topicSelect">Exercise topic</label>
+            <select class="topic-select" id="topicSelect">
+              <option value="all">Any topic</option>
+              <option value="complementary">Complementary · 90°</option>
+              <option value="supplementary">Supplementary · 180°</option>
+              <option value="vertex">Around a vertex · 360°</option>
+              <option value="straight">On a straight line · 180°</option>
+              <option value="vertical">Vertical angles · opposite angles equal</option>
+            </select>
+            <button class="generate-btn" id="generateBtn" type="button"><span class="plus" aria-hidden="true">+</span> Generate exercise</button>
+          </div>
+        </div>
+
+        <article class="exercise-card" aria-label="Exercise challenge">
+          <div class="exercise-head">
+            <div class="topic-identity">
+              <button class="topic-icon" id="topicIcon" type="button" data-topic="complementary" aria-label="Reveal complete answer" aria-pressed="false" title="Click to reveal the complete answer">∟</button>
+              <span class="topic-pill" id="topicPill">Complementary angles</span>
+            </div>
+            <div class="exercise-actions">
+              <button class="expanded-generate-btn" id="expandedGenerateBtn" type="button" aria-label="Generate a new exercise" title="Generate a new exercise">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9a7 7 0 0 1 11.8-2L20 12M4 12l2.6 5a7 7 0 0 0 11.8-2"/></svg>
+              </button>
+              <div class="level-selector" role="group" aria-label="Choose exercise level">
+                <button class="level-btn is-active" type="button" data-level="1" aria-pressed="true" title="Level 1 · Numerical foundations, direct angle rules" aria-label="Level 1: numerical foundations, direct angle rules and one-step unknowns">1</button>
+                <button class="level-btn" type="button" data-level="2" aria-pressed="false" title="Level 2 · Angle relationships, ratios and simple equations" aria-label="Level 2: practice angle relationships, ratios and simple equations">2</button>
+                <button class="level-btn" type="button" data-level="3" aria-pressed="false" title="Level 3 · Multi-step algebra and challenge problems" aria-label="Level 3: multi-step algebra and challenge problems">3</button>
+              </div>
+              <button class="timer-btn" id="timerBtn" type="button" aria-label="Start 30-second timer" aria-pressed="false"><span class="timer-symbol" id="timerIcon" aria-hidden="true">▶</span><span id="timerDisplay">30s</span></button>
+              <span class="challenge-count" id="challengeCount">ROUND 01</span>
+            </div>
+          </div>
+          <div class="exercise-stage" id="flipStage" role="button" tabindex="0" aria-pressed="false" aria-label="Reveal formula for complementary angles">
+            <div class="exercise-flip" id="exerciseFlip">
+              <div class="exercise-face exercise-face-front" id="questionFace" aria-hidden="false">
+                <div class="exercise-content" id="exerciseContent" aria-live="polite" aria-atomic="true">
+                  <section class="exercise-main" aria-label="Exercise question">
+                    <p class="exercise-kicker" id="exerciseKicker">FIND THE VALUE OF X</p>
+                    <h1 class="exercise-title" id="exerciseTitle">How large is each angle?</h1>
+                    <p class="prompt" id="promptText">Two complementary angles measure x + 60° and 2x. Find x and the measure of each angle.</p>
+                    <div class="math-terms" id="mathTerms" aria-label="Exercise expressions"></div>
+                    <div class="target-rule" id="targetRule">Together, they form an angle of <strong>90°</strong>.</div>
+                  </section>
+                  <aside class="diagram-panel" aria-label="Angle diagram">
+                    <div class="diagram-label"><span class="diagram-pulse"></span>ANGLE MAP</div>
+                    <svg id="exerciseDiagram" class="exercise-diagram" viewBox="0 0 300 250" role="img" aria-label="Diagram illustrating the current angle exercise"></svg>
+                    <p class="diagram-caption" id="diagramCaption">A visual model of the angle relationship.</p>
+                  </aside>
+                </div>
+              </div>
+              <div class="exercise-face exercise-face-back" id="formulaFace" aria-hidden="true">
+                <div class="formula-stack">
+                  <p class="exercise-kicker">KEY ANGLE RULE</p>
+                  <h2 class="formula-title" id="formulaTitle">Complementary angles</h2>
+                  <div class="formula-expression" id="formulaExpression">m∠A + m∠B = 90°</div>
+                  <p class="formula-description" id="formulaDescription">Complementary angles add up to a right angle.</p>
+                  <p class="flip-hint">Click again to return to the challenge.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="exercise-foot">
+            <div class="exercise-foot-copy">
+              <button class="expand-btn" id="expandBtn" type="button" aria-label="Expand exercise panel to fullscreen" aria-pressed="false" title="Expand exercise panel to fullscreen">
+                <svg class="expand-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M3 3l6 6M16 3h5v5m0-5-6 6M3 16v5h5m-5 0 6-6m10 1v5h-5m5 0-6-6"/></svg>
+                <span class="sr-only" id="expandLabel">Expand exercise panel to fullscreen</span>
+              </button>
+              <p class="physical-note"><strong>Now represent it:</strong> use your physical circle and explain how you checked your answer.</p>
+            </div>
+            <span class="teacher-tag">TEACHER · AWARD A POINT</span>
+          </div>
+          <dialog class="answer-dialog" id="answerDialog" aria-labelledby="answerDialogTitle">
+            <div class="answer-dialog-content">
+              <div class="answer-dialog-head">
+                <div><p class="answer-dialog-kicker">WORKED SOLUTION</p><h2 id="answerDialogTitle">Complete worked answer</h2></div>
+                <button class="answer-close" id="answerClose" type="button" aria-label="Close answer">×</button>
+              </div>
+              <div class="answer-steps" id="answerText" aria-live="polite"></div>
+              <p class="answer-dialog-note">Each action explains how the equation changes while keeping both sides balanced.</p>
+            </div>
+          </dialog>
+        </article>
+      </section>
+
+      <aside class="scoreboard" aria-labelledby="scoreboardTitle">
+        <div class="scoreboard-head">
+          <div><h2 id="scoreboardTitle">Team scores</h2><p>One point for each correct answer</p></div>
+          <button class="reset-btn" id="resetBtn" type="button" title="Start a new game and reset the scores">New game</button>
+        </div>
+        <div class="match-control">
+          <div class="match-copy"><span class="match-kicker">MATCH GOAL</span><strong>First team to reach:</strong></div>
+          <div class="goal-stepper" role="group" aria-label="Choose a winning target from five to ten points">
+            <button id="goalDown" type="button" aria-label="Decrease match target">−</button>
+            <output class="goal-value" id="goalValue" aria-live="polite">5</output>
+            <button id="goalUp" type="button" aria-label="Increase match target">+</button>
+            <span class="goal-unit">points</span>
+          </div>
+        </div>
+        <p class="match-status" id="matchStatus" role="status" aria-live="polite" hidden></p>
+        <div class="groups-list" id="groupsList"></div>
+        <p class="score-help footer-credit">Designed by David Beleño · Math Education · 2026</p>
+      </aside>
+    </main>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script>
+    (() => {
+      'use strict';
+      const STORAGE_KEY = 'angulos-en-accion-scores-v1';
+      const TARGET_STORAGE_KEY = 'angulos-en-accion-target-v1';
+      const MIN_TARGET = 5;
+      const MAX_TARGET = 10;
+      const groupNames = ['Team 1', 'Team 2', 'Team 3', 'Team 4'];
+      const topics = {
+        complementary: { name: 'Complementary angles', sum: '90°', icon: '∟', formula: 'm∠A + m∠B = 90°', formulaNote: 'Two angles whose measures add to 90° are complementary.' },
+        supplementary: { name: 'Supplementary angles', sum: '180°', icon: '⟷', formula: 'm∠A + m∠B = 180°', formulaNote: 'Two angles whose measures add to 180° are supplementary.' },
+        vertex: { name: 'Angles around a vertex', sum: '360°', icon: '✣', formula: 'm∠1 + m∠2 + ··· + m∠n = 360°', formulaNote: 'The measures of all angles around one point add up to 360°.' },
+        straight: { name: 'Angles on a straight line', sum: '180°', icon: '↔', formula: 'm∠1 + m∠2 + ··· + m∠n = 180°', formulaNote: 'All adjacent angles along a straight line add up to 180°.' },
+        vertical: { name: 'Vertical and adjacent angles', sum: 'equal measures', icon: '×', formula: 'm∠AOD = m∠COB', formulaNote: 'When two lines intersect, opposite (vertical) angles are equal. Adjacent angles form a linear pair and add to 180°.' }
+      };
+      const choose = (items) => items[Math.floor(Math.random() * items.length)];
+      const term = (value) => ({ value: String(value) });
+      const pairTerms = (values) => values.map(term);
+      const partitionSets = {
+        vertex: {
+          2: [[120, 240], [125, 235], [140, 220], [95, 265], [150, 210], [170, 190], [85, 275], [105, 255]],
+          3: [[100, 120, 140], [95, 115, 150], [80, 130, 150], [90, 90, 180], [110, 110, 140], [85, 125, 150], [70, 140, 150], [105, 105, 150], [75, 135, 150], [60, 120, 180]],
+          4: [[60, 80, 100, 120], [65, 85, 95, 115], [70, 90, 80, 120], [55, 75, 105, 125], [45, 95, 100, 120], [80, 80, 90, 110], [50, 70, 110, 130], [85, 95, 90, 90]],
+          5: [[40, 50, 60, 85, 125], [35, 55, 65, 90, 115], [45, 55, 70, 80, 110], [30, 45, 65, 95, 125], [25, 55, 70, 90, 120], [50, 60, 75, 80, 95], [35, 60, 75, 85, 105], [40, 65, 70, 85, 100]]
+        },
+        straight: {
+          2: [[65, 115], [80, 100], [55, 125], [70, 110], [95, 85], [45, 135], [105, 75], [60, 120]],
+          3: [[80, 45, 55], [70, 50, 60], [90, 35, 55], [65, 55, 60], [75, 40, 65], [50, 70, 60], [85, 30, 65], [45, 75, 60]],
+          4: [[60, 35, 40, 45], [50, 45, 35, 50], [40, 45, 55, 40], [30, 50, 45, 55], [25, 40, 55, 60], [35, 35, 50, 60], [20, 45, 55, 60], [42, 38, 50, 50]],
+          5: [[40, 30, 35, 35, 40], [50, 25, 35, 30, 40], [45, 35, 40, 25, 35], [25, 30, 35, 40, 50], [20, 25, 35, 45, 55], [30, 35, 40, 35, 40], [15, 30, 40, 45, 50], [35, 35, 35, 35, 40]]
+        }
+      };
+      const partitionFactories = (key) => [2, 3, 4, 5].map((count) => () => {
+        const values = choose(partitionSets[key][count]);
+        const known = values.slice(0, -1);
+        const knownSum = known.reduce((sum, value) => sum + value, 0);
+        const missing = values[values.length - 1];
+        const total = key === 'vertex' ? 360 : 180;
+        const knownList = known.map((value) => `${value}°`).join(', ');
+        const knownEquation = known.map((value) => `${value}°`).join(' + ');
+        const isVertex = key === 'vertex';
+        return {
+          kicker: 'FIND THE MISSING ANGLE',
+          title: isVertex ? 'Complete the full turn' : 'Complete the straight angle',
+          prompt: isVertex
+            ? `Exactly ${count} adjacent angles meet around one vertex. Their known measures are ${knownList}, plus one unknown. Find the missing angle and check all ${count} angles.`
+            : `Exactly ${count} adjacent angles lie on one straight line. Their known measures are ${knownList}, plus one unknown. Find the missing angle and check all ${count} angles.`,
+          terms: pairTerms([...known.map((value) => `${value}°`), '?']),
+          goal: isVertex ? 'A complete turn measures' : 'The adjacent angles on a straight line add up to',
+          ruleValue: `${total}°.`,
+          answer: `${knownEquation} + x = ${total}°\n${knownSum}° + x = ${total}°\nx = ${total}° - ${knownSum}° = ${missing}°\nCheck: ${[...known, missing].join('° + ')}° = ${total}°.`
+        };
+      });
+      const taskPools = {
+        complementary: [
+          () => ({ kicker: 'FIND THE VALUE OF X', title: 'How large is each angle?', prompt: 'Two complementary angles measure x + 60° and 2x. Find x and the measure of each angle.', terms: pairTerms(['x + 60°', '2x']), goal: 'Together, they form an angle of', answer: 'x = 10°; the angles measure 70° and 20°.' }),
+          () => { const a = choose([25, 35, 40, 55, 65]); return { kicker: 'FIND THE MISSING ANGLE', title: 'Complete the 90°', prompt: `One angle measures ${a}°. How large is its complement? Represent both angles.`, terms: pairTerms([`${a}°`, '?']), goal: 'The sum of the angles is', answer: `The missing angle measures ${90-a}°.` }; },
+          () => { const x = choose([10, 15, 20]); const a = choose([5, 10, 15, 20]); const b = 90 - 3*x - a; return { kicker: 'SOLVE THE EQUATION', title: 'What is the value of x?', prompt: `Two complementary angles measure x + ${a}° and 2x + ${b}°. Find x and the measure of each angle.`, terms: pairTerms([`x + ${a}°`, `2x + ${b}°`]), goal: 'Together, they form an angle of', answer: `x = ${x}°; the angles measure ${x+a}° and ${2*x+b}°.` }; }
+        ],
+        supplementary: [
+          () => { const y = choose([10, 15, 20, 25, 30, 35]); const a = y + 115; return { kicker: 'FIND THE SUPPLEMENTARY ANGLE', title: 'Which angle is missing?', prompt: `One angle measures y + 115°. If y = ${y}°, how large is its supplementary angle? Represent both angles.`, terms: pairTerms([`${a}°`, '?']), goal: 'The adjacent angles form', answer: `The given angle measures ${a}°; its supplement measures ${180-a}°.` }; },
+          () => { const a = choose([105, 115, 125, 135, 145, 155]); return { kicker: 'FIND THE MISSING ANGLE', title: 'Complete the 180°', prompt: `One angle on a straight line measures ${a}°. How large is the adjacent angle? Represent the supplementary pair.`, terms: pairTerms([`${a}°`, '?']), goal: 'The sum of the angles is', answer: `The missing angle measures ${180-a}°.` }; },
+          () => { const x = choose([10, 15, 20, 25, 30]); const a = choose([5, 10, 15, 20]); const b = 180 - 3*x - a; return { kicker: 'SOLVE THE EQUATION', title: 'Find x and the angle measures', prompt: `Two supplementary angles measure x + ${a}° and 2x + ${b}°. Find x and represent both.`, terms: pairTerms([`x + ${a}°`, `2x + ${b}°`]), goal: 'Together, they form an angle of', answer: `x = ${x}°; the angles measure ${x+a}° and ${2*x+b}°.` }; }
+        ],
+        vertex: [
+          ...partitionFactories('vertex'),
+          () => { const b = choose([30, 40, 50]); const sum = 100 + 3*b; return { kicker: 'ADD THE ANGLES AND COMPLETE THE TURN', title: 'What angle completes the turn?', prompt: `Three angles around a vertex measure 100°, 2b°, and b°. If b = ${b}°, find the fourth angle needed to complete the turn.`, terms: pairTerms(['100°', `${2*b}°`, `${b}°`, '?']), goal: 'The angles around a vertex add up to', ruleValue: '360°.', answer: `100° + ${2*b}° + ${b}° + x = 360°
+${sum}° + x = 360°
+x = ${360-sum}°.` }; },
+          () => ({ kicker: 'USE A RATIO', title: 'Divide the full turn', prompt: 'Three angles around a vertex are in the ratio 1 : 2 : 2. Find the measure of each angle.', terms: pairTerms(['a°', '2a°', '2a°']), goal: 'A full turn measures', ruleValue: '360°.', answer: `a + 2a + 2a = 360°
+5a = 360°
+a = 72°
+The angles are 72°, 144°, and 144°.` }),
+          () => ({ kicker: 'USE A RATIO', title: 'Find the three angles', prompt: 'Three angles around a vertex are in the ratio 1 : 2 : 5. Find the measure of each angle.', terms: pairTerms(['a°', '2a°', '5a°']), goal: 'A full turn measures', ruleValue: '360°.', answer: `a + 2a + 5a = 360°
+8a = 360°
+a = 45°
+The angles are 45°, 90°, and 225°.` }),
+          () => ({ kicker: 'SOLVE THE EQUATION', title: 'Find x', prompt: 'Three angles around a point measure 138°, 84°, and 4x°. Find x and the measure of the angle expressed with x.', terms: pairTerms(['138°', '84°', '4x°']), goal: 'The angles around a vertex add up to', ruleValue: '360°.', answer: `138° + 84° + 4x° = 360°
+4x + 222 = 360
+4x = 138
+x = 34.5°
+The 4x angle measures 138°.` })
+        ],
+        straight: [
+          ...partitionFactories('straight'),
+          () => ({ kicker: 'USE ADJACENT ANGLES', title: 'Find the value of b', prompt: 'Three adjacent angles on a straight line measure 4b°, 80°, and 20°. Find b and check the angle measures.', terms: pairTerms(['4b°', '80°', '20°']), goal: 'Angles on a straight line add up to', ruleValue: '180°.', answer: `4b° + 80° + 20° = 180°
+4b° = 80°
+b = 20°
+The angles are 80°, 80°, and 20°; their sum is 180°.` })
+        ],
+        vertical: [
+          () => ({ kicker: 'USE VERTICAL ANGLES', title: 'Find x and both opposite angles', prompt: 'Two straight lines intersect. A pair of opposite vertical angles measures 2x° and 60°. Find x and the measure of each angle.', terms: pairTerms(['2x°', '60°']), operators: ['='], goal: 'Opposite vertical angles have', ruleValue: 'equal measures.', answer: '2x° = 60°\nx = 30°\nEach vertical angle measures 60°. Each adjacent angle is 180° − 60° = 120°.' }),
+          () => ({ kicker: 'USE VERTICAL ANGLES', title: 'Solve for y', prompt: 'Two lines intersect. Opposite vertical angles measure 3y° and 120°. Find y and the measures of all four angles.', terms: pairTerms(['3y°', '120°']), operators: ['='], goal: 'Opposite vertical angles have', ruleValue: 'equal measures.', answer: '3y° = 120°\ny = 40°\nThe opposite angles are 120° each. The two adjacent angles are 180° − 120° = 60° each.' }),
+          () => ({ kicker: 'FIND ALL FOUR ANGLES', title: 'Use the opposite-angle pairs', prompt: 'Two lines intersect to form angles 1, 2, 3, and 4. If m∠1 = 76°, let m∠2 = a°, m∠3 = b°, and m∠4 = c°. Find a, b, and c.', terms: pairTerms(['76°', 'a°', 'b°', 'c°']), operators: ['·', '·', '·'], goal: 'Vertical pairs are equal; adjacent pairs add to', ruleValue: '180°.', answer: '∠1 and ∠3 are vertical: b = 76°.\n∠2 and ∠4 are vertical, and each is adjacent to 76°: a = c = 180° − 76° = 104°.\nThe four measures are 76°, 104°, 76°, and 104°.' }),
+          () => ({ kicker: 'FIND ALL FOUR ANGLES', title: 'Use a given angle of 114°', prompt: 'Two lines intersect to form four angles. If m∠1 = 114°, let m∠2 = p°, m∠3 = q°, and m∠4 = r°. ∠1 and ∠3 are opposite; ∠2 and ∠4 are opposite. Find p, q, and r.', terms: pairTerms(['114°', 'p°', 'q°', 'r°']), operators: ['·', '·', '·'], goal: 'Vertical pairs are equal; adjacent pairs add to', ruleValue: '180°.', answer: '∠1 and ∠3 are vertical: q = 114°.\nEach adjacent angle is 180° − 114° = 66°, so p = r = 66°.\nThe four measures are 114°, 66°, 114°, and 66°.' }),
+          () => ({ kicker: 'SOLVE THE VERTICAL-ANGLE EQUATION', title: 'Find x and the equal measures', prompt: 'Opposite vertical angles measure (x + 20)° and (2x − 10)°. Find x and the measure of each angle.', terms: pairTerms(['x + 20°', '2x − 10°']), operators: ['='], goal: 'Opposite vertical angles have', ruleValue: 'equal measures.', answer: 'x + 20 = 2x − 10\n30 = x\nx = 30°\nEach vertical angle measures 50°.' })
+        ]
+      };
+      const advancedPools = {
+        complementary: [
+          () => ({ kicker: 'SOLVE A MULTI-STEP EQUATION', title: 'Find x and both angles', prompt: 'Two complementary angles measure 2x + 15° and 3x + 5°. Find x and each angle measure.', terms: pairTerms(['2x + 15°', '3x + 5°']), goal: 'Complementary angles add up to', ruleValue: '90°.', answer: '2x + 15 + 3x + 5 = 90\n5x + 20 = 90\n5x = 70\nx = 14°\nThe angles are 43° and 47°.', solutionSteps: [{ math: '2x + 15° + 3x + 5° = 90°', action: 'Use the complementary-angle rule and add both expressions.' }, { math: '5x + 20° = 90°', action: 'Combine like terms on the left side.' }, { math: '5x = 70°', action: 'Subtract 20° from both sides.' }, { math: 'x = 14°', action: 'Divide both sides by 5.' }, { math: '2(14) + 15 = 43°; 3(14) + 5 = 47°', action: 'Substitute x = 14 into each angle expression and check: 43° + 47° = 90°.' }] }),
+          () => ({ kicker: 'REASON WITH COMPLEMENTS', title: 'Compare two related angles', prompt: 'A pair of complementary angles measures x° and (x + 18)°. Find x and both measures.', terms: pairTerms(['x°', 'x + 18°']), goal: 'The pair forms a right angle of', ruleValue: '90°.', answer: 'x + x + 18 = 90\n2x + 18 = 90\n2x = 72\nx = 36°\nThe angles are 36° and 54°.', solutionSteps: [{ math: 'x + (x + 18°) = 90°', action: 'Write the complementary-angle equation.' }, { math: '2x + 18° = 90°', action: 'Combine the two x terms.' }, { math: '2x = 72°', action: 'Subtract 18° from both sides.' }, { math: 'x = 36°', action: 'Divide both sides by 2.' }, { math: '36° and 36° + 18° = 54°', action: 'Substitute x; verify that the angles total 90°.' }] })
+        ],
+        supplementary: [
+          () => ({ kicker: 'SOLVE A MULTI-STEP EQUATION', title: 'Find x and the angle pair', prompt: 'Two supplementary angles measure 3x + 12° and 2x + 18°. Find x and each angle.', terms: pairTerms(['3x + 12°', '2x + 18°']), goal: 'Supplementary angles add up to', ruleValue: '180°.', answer: '3x + 12 + 2x + 18 = 180\n5x + 30 = 180\n5x = 150\nx = 30°\nThe angles are 102° and 78°.', solutionSteps: [{ math: '3x + 12° + 2x + 18° = 180°', action: 'Use the supplementary-angle rule.' }, { math: '5x + 30° = 180°', action: 'Combine like terms.' }, { math: '5x = 150°', action: 'Subtract 30° from both sides.' }, { math: 'x = 30°', action: 'Divide both sides by 5.' }, { math: '3(30) + 12 = 102°; 2(30) + 18 = 78°', action: 'Substitute x and check: 102° + 78° = 180°.' }] }),
+          () => ({ kicker: 'COMPARE SUPPLEMENTARY ANGLES', title: 'Use the difference between angles', prompt: 'Two supplementary angles differ by 28°. The smaller angle is x° and the larger is (x + 28)°. Find both.', terms: pairTerms(['x°', 'x + 28°']), goal: 'The pair forms a straight angle of', ruleValue: '180°.', answer: 'x + (x + 28) = 180\n2x + 28 = 180\n2x = 152\nx = 76°\nThe angles are 76° and 104°.', solutionSteps: [{ math: 'x + (x + 28°) = 180°', action: 'Set the sum equal to 180°.' }, { math: '2x + 28° = 180°', action: 'Combine like terms.' }, { math: '2x = 152°', action: 'Subtract 28° from both sides.' }, { math: 'x = 76°', action: 'Divide both sides by 2.' }, { math: '76° and 76° + 28° = 104°', action: 'Substitute x and verify that the sum is 180°.' }] })
+        ],
+        vertex: [
+          () => ({ kicker: 'SOLVE A FOUR-ANGLE TURN', title: 'Find each angle around the point', prompt: 'Four angles around a vertex measure a°, 2a°, 3a°, and 4a°. Find a and all four measures.', terms: pairTerms(['a°', '2a°', '3a°', '4a°']), goal: 'Angles around a vertex total', ruleValue: '360°.', answer: 'a + 2a + 3a + 4a = 360\n10a = 360\na = 36°\nThe angles are 36°, 72°, 108°, and 144°.', solutionSteps: [{ math: 'a + 2a + 3a + 4a = 360°', action: 'Set the sum around the vertex equal to 360°.' }, { math: '10a = 360°', action: 'Combine like terms.' }, { math: 'a = 36°', action: 'Divide both sides by 10.' }, { math: '36°, 72°, 108°, 144°', action: 'Substitute a = 36; check that their sum is 360°.' }] }),
+          () => ({ kicker: 'CHALLENGE · FIVE ANGLES', title: 'Solve the ratio around a point', prompt: 'Five angles around a vertex are in the ratio 1 : 1 : 2 : 2 : 4. Find all five measures.', terms: pairTerms(['a°', 'a°', '2a°', '2a°', '4a°']), goal: 'A complete turn is', ruleValue: '360°.', answer: 'a + a + 2a + 2a + 4a = 360\n10a = 360\na = 36°\nThe angles are 36°, 36°, 72°, 72°, and 144°.', solutionSteps: [{ math: 'a + a + 2a + 2a + 4a = 360°', action: 'Write the complete-turn equation.' }, { math: '10a = 360°', action: 'Add the ratio parts.' }, { math: 'a = 36°', action: 'Divide both sides by 10.' }, { math: '36°, 36°, 72°, 72°, 144°', action: 'Multiply each ratio part by 36° and check the total.' }] })
+        ],
+        straight: [
+          () => ({ kicker: 'SOLVE A THREE-ANGLE EQUATION', title: 'Find x on the straight line', prompt: 'Three adjacent angles on a straight line measure 2x°, (x + 20)°, and (3x + 40)°. Find x and all three angles.', terms: pairTerms(['2x°', 'x + 20°', '3x + 40°']), goal: 'Angles on a straight line total', ruleValue: '180°.', answer: '2x + x + 20 + 3x + 40 = 180\n6x + 60 = 180\n6x = 120\nx = 20°\nThe angles are 40°, 40°, and 100°.', solutionSteps: [{ math: '2x + (x + 20°) + (3x + 40°) = 180°', action: 'Use the straight-line angle-sum rule.' }, { math: '6x + 60° = 180°', action: 'Combine like terms.' }, { math: '6x = 120°', action: 'Subtract 60° from both sides.' }, { math: 'x = 20°', action: 'Divide both sides by 6.' }, { math: '40°, 40°, 100°', action: 'Substitute x and verify the sum is 180°.' }] }),
+          () => ({ kicker: 'CHALLENGE · FIVE ANGLES', title: 'Partition a straight angle', prompt: 'Five adjacent angles along a straight line measure x°, 2x°, 3x°, 4x°, and 5x°. Find x and each angle.', terms: pairTerms(['x°', '2x°', '3x°', '4x°', '5x°']), goal: 'A straight angle measures', ruleValue: '180°.', answer: 'x + 2x + 3x + 4x + 5x = 180\n15x = 180\nx = 12°\nThe angles are 12°, 24°, 36°, 48°, and 60°.', solutionSteps: [{ math: 'x + 2x + 3x + 4x + 5x = 180°', action: 'Set the adjacent-angle sum equal to 180°.' }, { math: '15x = 180°', action: 'Combine the variable terms.' }, { math: 'x = 12°', action: 'Divide both sides by 15.' }, { math: '12°, 24°, 36°, 48°, 60°', action: 'Substitute x and check that the five angles total 180°.' }] })
+        ],
+        vertical: [
+          () => ({ kicker: 'CHALLENGE · VERTICAL ANGLES', title: 'Solve and justify each operation', prompt: 'Opposite vertical angles measure (3x + 10)° and (5x − 30)°. Find x and the measure of each opposite angle.', terms: pairTerms(['3x + 10°', '5x − 30°']), operators: ['='], goal: 'Opposite vertical angles are', ruleValue: 'congruent.', answer: '3x + 10 = 5x − 30\n3x + 40 = 5x\n40 = 2x\nx = 20°\nEach angle measures 70°.', solutionSteps: [{ math: '3x + 10° = 5x − 30°', action: 'Set opposite vertical angles equal; they are congruent.' }, { math: '3x + 40° = 5x', action: 'Add 30° to both sides.' }, { math: '40° = 2x', action: 'Subtract 3x from both sides.' }, { math: 'x = 20°', action: 'Divide both sides by 2.' }, { math: '3(20) + 10 = 70°', action: 'Substitute x = 20; the opposite angle also measures 70°.' }] }),
+          () => ({ kicker: 'CHALLENGE · FIND ALL FOUR', title: 'Use vertical and supplementary pairs', prompt: 'Two lines intersect. One angle measures (2x + 10)° and its adjacent angle measures (4x − 10)°. Find x and all four angle measures.', terms: pairTerms(['2x + 10°', '4x − 10°']), operators: ['+'], goal: 'Adjacent angles form a linear pair totaling', ruleValue: '180°.', answer: '2x + 10 + 4x − 10 = 180\n6x = 180\nx = 30°\nThe angles are 70°, 110°, 70°, and 110°.', solutionSteps: [{ math: '(2x + 10°) + (4x − 10°) = 180°', action: 'Adjacent angles on a line are supplementary.' }, { math: '6x = 180°', action: 'Combine like terms; +10° and −10° cancel.' }, { math: 'x = 30°', action: 'Divide both sides by 6.' }, { math: '2(30) + 10 = 70°; 4(30) − 10 = 110°', action: 'Substitute x; opposite angles repeat these measures.' }] })
+        ]
+      };
+      const angleTotal = (key) => key === 'complementary' ? 90 : (key === 'vertex' ? 360 : 180);
+      const angleRuleText = (key) => key === 'complementary' ? 'Complementary angles total' : (key === 'supplementary' ? 'Supplementary angles total' : (key === 'vertex' ? 'Angles around a vertex total' : 'Angles on a straight line total'));
+      const formatLinearTerm = (coefficient, constant, variable='x') => {
+        const variablePart = `${coefficient === 1 ? '' : coefficient}${variable}`;
+        if (constant === 0) return `${variablePart}°`;
+        return `${variablePart} ${constant < 0 ? '−' : '+'} ${Math.abs(constant)}°`;
+      };
+      const fixedMissingAngleFactory = (key, known) => () => {
+        const total=angleTotal(key), missing=total-known;
+        const isComplement=key==='complementary';
+        return { kicker:'FIND THE MISSING ANGLE', title:isComplement?'Complete the right angle':'Complete the straight angle',
+          prompt:isComplement?`One angle measures ${known}°. Find its complement and check that the pair forms a right angle.`:`One angle measures ${known}°. Find its supplement and check that the pair forms a straight angle.`,
+          terms:pairTerms([`${known}°`,'?']), goal:isComplement?'The two angles add up to':'The adjacent angles add up to', ruleValue:`${total}°.`,
+          answer:`${known}° + x = ${total}°\nx = ${missing}°\nCheck: ${known}° + ${missing}° = ${total}°.` };
+      };
+      const fixedPartitionFactory = (key, values) => () => {
+        const total=angleTotal(key), known=values.slice(0,-1), missing=values.at(-1), count=values.length;
+        const isVertex=key==='vertex', list=known.map((value)=>`${value}°`).join(', ');
+        return { kicker:'FIND THE MISSING ANGLE', title:isVertex?'Complete the full turn':'Complete the straight angle',
+          prompt:isVertex?`Exactly ${count} adjacent angles meet at a vertex. Their known measures are ${list}, plus one unknown. Find the missing measure.`:`Exactly ${count} adjacent angles lie along a straight line. Their known measures are ${list}, plus one unknown. Find the missing measure.`,
+          terms:pairTerms([...known.map((value)=>`${value}°`),'?']), goal:isVertex?'A complete turn measures':'The angles along a straight line total', ruleValue:`${total}°.`,
+          answer:`${known.map((value)=>`${value}°`).join(' + ')} + x = ${total}°\nx = ${missing}°\nCheck all ${count} angles: ${values.map((value)=>`${value}°`).join(' + ')} = ${total}°.` };
+      };
+      const linearPairFactories = (key, specs) => specs.map(([a,c,b,x]) => () => {
+        const total=angleTotal(key), d=total-(a+b)*x-c;
+        const first=formatLinearTerm(a,c), second=formatLinearTerm(b,d);
+        return { kicker:'SOLVE THE ANGLE EQUATION', title:'Find x and both angle measures',
+          prompt:`Two ${key==='complementary'?'complementary':'supplementary'} angles measure ${first} and ${second}. Find x and each angle measure.`,
+          terms:pairTerms([first,second]), operators:['+'], goal:angleRuleText(key), ruleValue:`${total}°.`,
+          answer:`${first} + ${second} = ${total}°\nx = ${x}°\nThe angles measure ${a*x+c}° and ${b*x+d}°; check their sum.` };
+      });
+      const linearSumFactories = (key, specs) => specs.map(({x,coefficients,constants}) => () => {
+        const total=angleTotal(key), expressions=coefficients.map((coefficient,index)=>formatLinearTerm(coefficient,constants[index]));
+        const measures=coefficients.map((coefficient,index)=>coefficient*x+constants[index]);
+        const isVertex=key==='vertex', count=expressions.length;
+        return { kicker:'SOLVE THE ANGLE SUM', title:isVertex?'Find the angles around the point':'Find the adjacent angles',
+          prompt:isVertex?`${count} adjacent angles around a vertex are ${expressions.join(', ')}. Find x and check the full turn.`:`${count} adjacent angles on a straight line are ${expressions.join(', ')}. Find x and check the straight angle.`,
+          terms:pairTerms(expressions), operators:Array(count-1).fill('+'), goal:angleRuleText(key), ruleValue:`${total}°.`,
+          answer:`${expressions.join(' + ')} = ${total}°\nx = ${x}°\nThe angle measures are ${measures.map((value)=>`${value}°`).join(', ')}.` };
+      });
+      const verticalEquationFactories = (specs) => specs.map(([a,c,b,x]) => () => {
+        const d=a*x+c-b*x, first=formatLinearTerm(a,c), second=formatLinearTerm(b,d), measure=a*x+c;
+        return { kicker:'USE VERTICAL ANGLES', title:'Find x and the opposite angle measures',
+          prompt:`Two lines intersect. Opposite vertical angles measure ${first} and ${second}. Find x, then find the measure of each opposite angle.`,
+          terms:pairTerms([first,second]), operators:['='], goal:'Opposite vertical angles have', ruleValue:'equal measures.',
+          answer:`${first} = ${second}\nx = ${x}°\nEach angle in that opposite pair measures ${measure}°.` };
+      });
+      const fourAngleVerticalFactory = (given) => () => {
+        const adjacent=180-given;
+        return { kicker:'FIND ALL FOUR ANGLES', title:`Start with an angle of ${given}°`,
+          prompt:`Two lines intersect. If m∠1 = ${given}°, find all four angle measures. ∠1 and ∠3 are opposite; ∠2 and ∠4 are opposite.`,
+          terms:pairTerms([`${given}°`,'a°','b°','c°']), operators:['·','·','·'], goal:'Opposite angles match; adjacent angles total', ruleValue:'180°.',
+          answer:`m∠3 = ${given}°\nm∠2 = m∠4 = 180° − ${given}° = ${adjacent}°\nThe four measures are ${given}°, ${adjacent}°, ${given}°, and ${adjacent}°.`,
+          solutionSteps:[
+            {math:`m∠3 = ${given}°`,action:'∠1 and ∠3 are opposite vertical angles, so they are equal.'},
+            {math:`m∠2 = m∠4 = 180° − ${given}° = ${adjacent}°`,action:`Subtract ${given}° from 180° because each adjacent pair is a linear pair.`},
+            {math:`${given}°, ${adjacent}°, ${given}°, ${adjacent}°`,action:'Check that opposite pairs match and all four measures add to 360°.'}
+          ] };
+      };
+      const introductoryVerticalFactory = (given,relation='opposite') => () => {
+        const isOpposite=relation==='opposite', unknown=isOpposite?given:180-given;
+        return {
+          kicker:isOpposite?'USE OPPOSITE ANGLES':'USE ADJACENT ANGLES',
+          title:isOpposite?'Find the opposite angle x':'Find the adjacent angle x',
+          prompt:isOpposite?`Two lines intersect. One angle measures ${given}° and its opposite angle measures x°. Find x.`:`Two lines intersect. One angle measures ${given}° and the angle directly beside it measures x°. Find x.`,
+          terms:pairTerms([`${given}°`,'x°']), operators:[isOpposite?'=':'+'],
+          goal:isOpposite?'Opposite vertical angles have':'Adjacent angles on a straight line add up to', ruleValue:isOpposite?'equal measures.':'180°.',
+          answer:isOpposite?`x = ${given}°\nOpposite vertical angles have equal measures, so the unknown angle is ${given}° too.`:`${given}° + x = 180°\nx = 180° − ${given}° = ${unknown}°\nCheck: ${given}° + ${unknown}° = 180°.`,
+          solutionSteps:isOpposite?[
+            {math:`m∠1 = ${given}°`,action:'This is the given angle measure.'},
+            {math:`x = ${given}°`,action:'Set opposite vertical angles equal; they are congruent.'},
+            {math:`x = ${given}°`,action:'Check: the unknown opposite angle matches the given angle.'}
+          ]:[
+            {math:`${given}° + x = 180°`,action:'The two adjacent angles form a straight line, so their measures add to 180°.'},
+            {math:`x = 180° − ${given}° = ${unknown}°`,action:`Subtract ${given}° from 180° to isolate x.`},
+            {math:`${given}° + ${unknown}° = 180°`,action:'Check that the adjacent angles make a straight angle.'}
+          ]
+        };
+      };
+      const formatExpandedExpression = (parts) => {
+        const terms=parts.filter(([coefficient,constant])=>coefficient!==0||constant!==0).map(([coefficient,constant])=>({
+          sign:coefficient!==0?Math.sign(coefficient):Math.sign(constant),
+          text:coefficient!==0?`${Math.abs(coefficient)===1?'':Math.abs(coefficient)}x°`:`${Math.abs(constant)}°`
+        }));
+        return terms.map((term,index)=>`${index===0?(term.sign<0?'−':''):(term.sign<0?' − ':' + ')}${term.text}`).join('');
+      };
+      const expandedValue = (parts,x) => parts.reduce((sum,[coefficient,constant])=>sum+coefficient*x+constant,0);
+      const multiTermPairFactories = (key,specs) => specs.map(({x,first,second})=>()=>{
+        const total=angleTotal(key), firstText=formatExpandedExpression(first), secondText=formatExpandedExpression(second);
+        const firstMeasure=expandedValue(first,x), secondMeasure=expandedValue(second,x);
+        return { kicker:'COLLECT LIKE TERMS', title:'Combine several terms in each angle',
+          prompt:`Two ${key==='complementary'?'complementary':'supplementary'} angles measure ${firstText} and ${secondText}. Combine like terms, solve for x, then find both angle measures.`,
+          terms:pairTerms([firstText,secondText]), operators:['+'], goal:angleRuleText(key), ruleValue:`${total}°.`,
+          answer:`${firstText} + ${secondText} = ${total}°\nx = ${x}°\nThe angles measure ${firstMeasure}° and ${secondMeasure}°.` };
+      });
+      const multiTermSumFactories = (key,specs) => specs.map(({x,expressions})=>()=>{
+        const total=angleTotal(key), texts=expressions.map(formatExpandedExpression), measures=expressions.map((parts)=>expandedValue(parts,x));
+        const isVertex=key==='vertex', count=texts.length;
+        return { kicker:'COLLECT LIKE TERMS', title:isVertex?'Solve the full-turn equation':'Solve the straight-line equation',
+          prompt:isVertex?`${count} adjacent angles around a vertex measure ${texts.join(', ')}. Combine all like terms, find x, and calculate every angle.`:`${count} adjacent angles on a straight line measure ${texts.join(', ')}. Combine all like terms, find x, and calculate every angle.`,
+          terms:pairTerms(texts), operators:Array(count-1).fill('+'), goal:angleRuleText(key), ruleValue:`${total}°.`,
+          answer:`${texts.join(' + ')} = ${total}°\nx = ${x}°\nThe angles measure ${measures.map((value)=>`${value}°`).join(', ')}.` };
+      });
+      const expandedVerticalEquationFactories = (specs) => specs.map(({a,b,x,left,right})=>()=>{
+        const first=formatExpandedExpression([[a,0],...left.map((value)=>[0,value])]);
+        const second=formatExpandedExpression([[b,0],...right.map((value)=>[0,value])]);
+        const measure=a*x+left.reduce((sum,value)=>sum+value,0);
+        return { kicker:'COLLECT TERMS · VERTICAL ANGLES', title:'Solve the multi-term equality',
+          prompt:`Two lines intersect. Opposite vertical angles measure ${first} and ${second}. Collect the terms, solve for x, and find the common angle measure.`,
+          terms:pairTerms([first,second]), operators:['='], goal:'Opposite vertical angles have', ruleValue:'equal measures.',
+          answer:`${first} = ${second}\nx = ${x}°\nEach angle in that opposite pair measures ${measure}°.` };
+      });
+      const expandedAdjacentPairFactories = (specs) => specs.map(({a,b,x,left,right})=>()=>{
+        const first=formatExpandedExpression([[a,0],...left.map((value)=>[0,value])]);
+        const second=formatExpandedExpression([[b,0],...right.map((value)=>[0,value])]);
+        const firstMeasure=a*x+left.reduce((sum,value)=>sum+value,0), secondMeasure=b*x+right.reduce((sum,value)=>sum+value,0);
+        return { kicker:'COLLECT TERMS · ADJACENT ANGLES', title:'Solve the linear-pair equation',
+          prompt:`At an intersection, adjacent angles measure ${first} and ${second}. Combine the terms, solve for x, and find both angles.`,
+          terms:pairTerms([first,second]), operators:['+'], goal:'Adjacent angles on a straight line add up to', ruleValue:'180°.',
+          answer:`${first} + ${second} = 180°\nx = ${x}°\nThe adjacent angles measure ${firstMeasure}° and ${secondMeasure}°.` };
+      });
+      const extraPools = {
+        1: {
+          complementary:[18,28,47,62,73].map((value)=>fixedMissingAngleFactory('complementary',value)),
+          supplementary:[102,112,128,142,168].map((value)=>fixedMissingAngleFactory('supplementary',value)),
+          vertex:[[105,255],[75,115,170],[45,75,100,140],[30,50,65,95,120],[55,65,80,70,90]].map((values)=>fixedPartitionFactory('vertex',values)),
+          straight:[[70,110],[45,55,80],[35,40,45,60],[25,30,35,40,50],[42,38,50,50]].map((values)=>fixedPartitionFactory('straight',values)),
+          vertical:[introductoryVerticalFactory(45,'opposite'),introductoryVerticalFactory(72,'opposite'),introductoryVerticalFactory(112,'opposite'),introductoryVerticalFactory(135,'opposite'),introductoryVerticalFactory(58,'adjacent'),introductoryVerticalFactory(90,'adjacent'),introductoryVerticalFactory(120,'adjacent'),introductoryVerticalFactory(155,'adjacent')]
+        },
+        2: {
+          complementary:linearPairFactories('complementary',[[1,18,2,20],[3,6,1,15],[2,8,1,24],[2,15,2,17],[4,2,1,15]]),
+          supplementary:linearPairFactories('supplementary',[[1,10,2,50],[3,15,2,31],[2,12,1,50],[2,20,4,26],[3,6,1,30]]),
+          vertex:[
+            fixedPartitionFactory('vertex',[90,100,170]),fixedPartitionFactory('vertex',[55,70,85,75,75]),fixedPartitionFactory('vertex',[80,90,100,90]),
+            ...linearSumFactories('vertex',[
+              {x:60,coefficients:[1,2,3],constants:[0,0,0]},
+              {x:36,coefficients:[1,2,2,5],constants:[0,0,0,0]},
+              {x:55,coefficients:[2,3,1],constants:[20,10,0]}
+            ])
+          ],
+          straight:[
+            fixedPartitionFactory('straight',[65,35,80]),fixedPartitionFactory('straight',[40,35,50,55]),fixedPartitionFactory('straight',[20,25,35,45,55]),
+            ...linearSumFactories('straight',[
+              {x:20,coefficients:[1,2,3],constants:[10,20,30]},
+              {x:25,coefficients:[2,1,3],constants:[15,5,10]},
+              {x:30,coefficients:[1,1,1,1],constants:[0,10,20,30]}
+            ])
+          ],
+          vertical:[fourAngleVerticalFactory(82),fourAngleVerticalFactory(108),fourAngleVerticalFactory(47),...verticalEquationFactories([[2,10,3,20],[1,25,2,15]])]
+        },
+        3: {
+          complementary:multiTermPairFactories('complementary',[
+            {x:1,first:[[2,0],[0,10],[0,67]],second:[[3,0],[0,3],[0,5]]},
+            {x:5,first:[[4,0],[0,20],[0,15]],second:[[2,0],[0,10],[0,15]]},
+            {x:4,first:[[5,0],[0,14],[0,12]],second:[[3,0],[0,20],[0,12]]},
+            {x:6,first:[[4,0],[0,10],[0,8]],second:[[5,0],[0,9],[0,9]]},
+            {x:5,first:[[6,0],[0,15],[0,5]],second:[[4,0],[0,10],[0,10]]}
+          ]),
+          supplementary:multiTermPairFactories('supplementary',[
+            {x:12,first:[[3,0],[0,20],[0,35]],second:[[5,0],[0,15],[0,14]]},
+            {x:18,first:[[4,0],[0,10],[0,2]],second:[[5,0],[0,3],[0,3]]},
+            {x:19,first:[[3,0],[0,2],[0,1]],second:[[6,0],[0,3],[0,3]]},
+            {x:18,first:[[5,0],[0,5],[0,4]],second:[[4,0],[0,4],[0,5]]},
+            {x:18,first:[[6,0],[0,8],[0,1]],second:[[3,0],[0,4],[0,5]]}
+          ]),
+          vertex:multiTermSumFactories('vertex',[
+            {x:10,expressions:[[[4,0],[0,55],[0,25]],[[5,0],[0,60],[0,30]],[[3,0],[0,40],[0,30]]]},
+            {x:10,expressions:[[[2,0],[0,60],[0,20]],[[3,0],[0,50],[0,20]],[[3,0],[0,30],[0,30]],[[5,0],[0,10],[0,10]]]},
+            {x:10,expressions:[[[1,0],[0,50],[0,20]],[[2,0],[0,40],[0,20]],[[3,0],[0,30],[0,10]],[[4,0],[0,20],[0,10]],[[5,0],[0,5],[0,5]]]},
+            {x:10,expressions:[[[6,0],[0,60],[0,20]],[[5,0],[0,50],[0,20]],[[6,0],[0,30],[0,10]]]},
+            {x:10,expressions:[[[4,0],[0,40],[0,20]],[[4,0],[0,30],[0,30]],[[3,0],[0,20],[0,10]],[[2,0],[0,10],[0,5]],[[5,0],[0,10],[0,5]]]}
+          ]),
+          straight:multiTermSumFactories('straight',[
+            {x:10,expressions:[[[2,0],[0,20],[0,10]],[[3,0],[0,15],[0,15]],[[4,0],[0,20],[0,10]]]},
+            {x:10,expressions:[[[1,0],[0,20],[0,10]],[[2,0],[0,15],[0,5]],[[3,0],[0,10],[0,10]],[[3,0],[0,10],[0,10]]]},
+            {x:10,expressions:[[[1,0],[0,10],[0,5]],[[2,0],[0,8],[0,7]],[[2,0],[0,5],[0,5]],[[3,0],[0,10],[0,2]],[[4,0],[0,4],[0,4]]]},
+            {x:10,expressions:[[[4,0],[0,20],[0,10]],[[5,0],[0,15],[0,5]],[[3,0],[0,5],[0,5]]]},
+            {x:10,expressions:[[[6,0],[0,5],[0,5]],[[2,0],[0,3],[0,2]],[[4,0],[0,4],[0,3]],[[3,0],[0,4],[0,4]]]}
+          ]),
+          vertical:[...expandedVerticalEquationFactories([
+            {a:2,b:5,x:8,left:[10,7],right:[20,-27]},
+            {a:4,b:2,x:12,left:[15,5],right:[30,14]},
+            {a:5,b:3,x:9,left:[20,4],right:[25,17]},
+            {a:3,b:1,x:15,left:[18,7],right:[40,15]},
+            {a:4,b:2,x:14,left:[25,6],right:[50,9]},
+            {a:2,b:5,x:11,left:[30,8],right:[14,-9]},
+            {a:3,b:5,x:13,left:[22,11],right:[20,-13]}
+          ]),...expandedAdjacentPairFactories([
+            {a:3,b:4,x:10,left:[20,5],right:[60,25]},
+            {a:5,b:2,x:12,left:[30,10],right:[50,6]},
+            {a:4,b:3,x:15,left:[20,10],right:[30,15]}
+          ])]
+        }
+      };
+      const levelPools = {
+        1: {
+          complementary:[taskPools.complementary[1],...extraPools[1].complementary],
+          supplementary:[taskPools.supplementary[1],...extraPools[1].supplementary],
+          vertex:[...taskPools.vertex.slice(0,4),...extraPools[1].vertex],
+          straight:[...taskPools.straight.slice(0,4),...extraPools[1].straight],
+          vertical:[...extraPools[1].vertical]
+        },
+        2: {
+          complementary:[taskPools.complementary[0],taskPools.complementary[2],...extraPools[2].complementary],
+          supplementary:[taskPools.supplementary[0],taskPools.supplementary[2],...extraPools[2].supplementary],
+          vertex:[taskPools.vertex[4],taskPools.vertex[5],...extraPools[2].vertex],
+          straight:[taskPools.straight[4],...extraPools[2].straight],
+          vertical:[taskPools.vertical[0],taskPools.vertical[1],taskPools.vertical[2],taskPools.vertical[3],taskPools.vertical[4],...advancedPools.vertical,...extraPools[2].vertical]
+        },
+        3: {
+          complementary:[...advancedPools.complementary,...extraPools[3].complementary],
+          supplementary:[...advancedPools.supplementary,...extraPools[3].supplementary],
+          vertex:[...advancedPools.vertex,...extraPools[3].vertex],
+          straight:[...advancedPools.straight,...extraPools[3].straight],
+          vertical:[...extraPools[3].vertical]
+        }
+      };
+      const els = {
+        topic: document.getElementById('topicSelect'), generate: document.getElementById('generateBtn'),
+        card: document.querySelector('.exercise-card'), flipStage: document.getElementById('flipStage'),
+        questionFace: document.getElementById('questionFace'), formulaFace: document.getElementById('formulaFace'),
+        topicIcon: document.getElementById('topicIcon'), topicPill: document.getElementById('topicPill'), count: document.getElementById('challengeCount'),
+        content: document.getElementById('exerciseContent'), kicker: document.getElementById('exerciseKicker'),
+        title: document.getElementById('exerciseTitle'), prompt: document.getElementById('promptText'),
+        formulaTitle: document.getElementById('formulaTitle'), formulaExpression: document.getElementById('formulaExpression'), formulaDescription: document.getElementById('formulaDescription'),
+        terms: document.getElementById('mathTerms'), goal: document.getElementById('targetRule'), answerDialog: document.getElementById('answerDialog'), answerClose: document.getElementById('answerClose'), answerText: document.getElementById('answerText'), diagram: document.getElementById('exerciseDiagram'), diagramCaption: document.getElementById('diagramCaption'), levelButtons: [...document.querySelectorAll('.level-btn')],
+        groups: document.getElementById('groupsList'), reset: document.getElementById('resetBtn'), toast: document.getElementById('toast'),
+        goalDown: document.getElementById('goalDown'), goalUp: document.getElementById('goalUp'), goalValue: document.getElementById('goalValue'), matchStatus: document.getElementById('matchStatus'),
+        timer: document.getElementById('timerBtn'), timerIcon: document.getElementById('timerIcon'), timerDisplay: document.getElementById('timerDisplay'), expand: document.getElementById('expandBtn'), expandLabel: document.getElementById('expandLabel')
+      };
+      let score = [0, 0, 0, 0];
+      try { localStorage.removeItem(STORAGE_KEY); } catch (_) { /* Scores always start clean, even when storage is disabled. */ }
+      let target = readTarget();
+      let gameWinner = score.findIndex((value) => value >= target);
+      let round = 1;
+      let currentLevel = 1;
+      let lastWinnerFace = '';
+      let fallbackExpanded = false;
+      let currentTask = null;
+      let currentTopicKey = 'complementary';
+      const exerciseFactoryBags = new Map();
+      let toastTimer;
+      let timerInterval = null;
+      let timerRemaining = 30;
+      let timerStatus = 'idle';
+      let alarmAudioContext = null;
+      let showingFormula = false;
+      let answerVisible = false;
+      let previousKey = '';
+
+      function readScores() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+          if (Array.isArray(saved) && saved.length === 4 && saved.every((value) => Number.isSafeInteger(value) && value >= 0)) return saved;
+        } catch (_) { /* Continue with a clean scoreboard if browser storage is unavailable. */ }
+        return [0, 0, 0, 0];
+      }
+      function readTarget() {
+        try {
+          const saved = Number(localStorage.getItem(TARGET_STORAGE_KEY));
+          if (Number.isInteger(saved) && saved >= MIN_TARGET && saved <= MAX_TARGET) return saved;
+        } catch (_) { /* Use the default target if browser storage is unavailable. */ }
+        return MIN_TARGET;
+      }
+      function saveScores() {
+        try { localStorage.setItem(STORAGE_KEY, JSON.stringify(score)); } catch (_) { showToast('Scores could not be saved in this browser.'); }
+      }
+      function saveTarget() {
+        try { localStorage.setItem(TARGET_STORAGE_KEY, String(target)); } catch (_) { showToast('The match target could not be saved in this browser.'); }
+      }
+      function randomWinnerFace() {
+        const faces = ['😎', '🤩', '🥳', '😄', '😁', '😆', '🤓', '😺', '😸', '🙌', '✨', '🦄'];
+        const options = faces.filter((face) => face !== lastWinnerFace);
+        lastWinnerFace = choose(options);
+        return lastWinnerFace;
+      }
+      function celebrateTeam(card) {
+        card.querySelectorAll('.pinata-burst, .winner-face').forEach((element) => element.remove());
+        const burst = document.createElement('span'); burst.className = 'pinata-burst'; burst.setAttribute('aria-hidden', 'true');
+        const pieces = 20;
+        for (let index = 0; index < pieces; index += 1) {
+          const piece = document.createElement('span'); piece.className = 'confetti-piece';
+          const angle = (Math.PI * 2 * index) / pieces - Math.PI / 2;
+          const distance = 30 + (index % 4) * 13;
+          piece.style.setProperty('--dx', `${Math.cos(angle) * distance}px`);
+          piece.style.setProperty('--dy', `${Math.sin(angle) * distance}px`);
+          piece.style.setProperty('--spin', `${180 + index * 23}deg`);
+          burst.append(piece);
+        }
+        const face = document.createElement('span'); face.className = 'winner-face'; face.textContent = randomWinnerFace(); face.setAttribute('aria-hidden', 'true');
+        card.append(burst, face);
+        window.setTimeout(() => { burst.remove(); face.remove(); }, 1050);
+      }
+      function renderGroups() {
+        els.groups.replaceChildren();
+        groupNames.forEach((name, index) => {
+          const card = document.createElement('button'); card.className = 'group-card'; card.type = 'button'; card.dataset.team = String(index);
+          card.setAttribute('aria-label', `Add one point to ${name}`);
+          const label = document.createElement('span'); label.className = 'group-name'; label.textContent = name;
+          const value = document.createElement('span'); value.className = 'group-score'; value.textContent = String(score[index]);
+          const points = document.createElement('small'); points.textContent = score[index] === 1 ? 'point' : 'points'; value.append(points);
+          const action = document.createElement('span'); action.className = 'group-action-label'; action.textContent = '+1 point'; action.setAttribute('aria-hidden', 'true');
+          card.append(label, value, action);
+          card.addEventListener('click', () => {
+            if (gameWinner !== -1) return;
+            score[index] += 1; saveScores(); value.firstChild.textContent = String(score[index]); points.textContent = score[index] === 1 ? 'point' : 'points';
+            card.classList.remove('is-scored'); value.classList.remove('is-bumping'); void card.offsetWidth;
+            card.classList.add('is-scored'); value.classList.add('is-bumping');
+            window.setTimeout(() => { card.classList.remove('is-scored'); value.classList.remove('is-bumping'); }, 850);
+            if (score[index] >= target) gameWinner = index;
+            syncMatchState(); celebrateTeam(card);
+            showToast(gameWinner === index ? `${name} wins at ${target} points!` : `+1 point for ${name}`);
+          });
+          els.groups.append(card);
+        });
+        syncMatchState();
+      }
+      function syncMatchState() {
+        els.goalValue.textContent = String(target);
+        els.goalDown.disabled = target <= MIN_TARGET;
+        els.goalUp.disabled = target >= MAX_TARGET;
+        const hasWinner = gameWinner >= 0;
+        els.matchStatus.hidden = !hasWinner;
+        els.matchStatus.textContent = hasWinner ? `${groupNames[gameWinner]} wins the match at ${target} points! Start a new game to play again.` : '';
+        els.groups.querySelectorAll('.group-card').forEach((card, index) => {
+          const action = card.querySelector('.group-action-label');
+          if (gameWinner === index) {
+            card.classList.add('is-winner'); card.classList.remove('is-locked'); card.disabled = true;
+            card.setAttribute('aria-label', `${groupNames[index]} wins at ${target} points`); action.textContent = '🏆 WINNER';
+          } else if (hasWinner) {
+            card.classList.add('is-locked'); card.classList.remove('is-winner'); card.disabled = true;
+            card.setAttribute('aria-label', `The game is over. ${groupNames[gameWinner]} won.`); action.textContent = 'MATCH OVER';
+          } else {
+            card.classList.remove('is-winner', 'is-locked'); card.disabled = false;
+            card.setAttribute('aria-label', `Add one point to ${groupNames[index]}`); action.textContent = '+1 point';
+          }
+        });
+      }
+      function changeTarget(step) {
+        const nextTarget = Math.min(MAX_TARGET, Math.max(MIN_TARGET, target + step));
+        if (nextTarget === target) return;
+        const hasScores = score.some((value) => value > 0);
+        if (hasScores && !window.confirm(`Change the target to ${nextTarget} points and start a new game? All four scores will reset to zero.`)) return;
+        if (hasScores) { score = [0, 0, 0, 0]; gameWinner = -1; saveScores(); }
+        target = nextTarget; saveTarget();
+        if (hasScores) renderGroups(); else syncMatchState();
+        showToast(`Match target: ${target} points.`);
+      }
+      function startNewGame() {
+        const hasScores = score.some((value) => value > 0);
+        if (hasScores && !window.confirm('Start a new game and reset all four team scores to zero?')) return;
+        score = [0, 0, 0, 0]; gameWinner = -1; saveScores(); renderGroups();
+        showToast('New game started.');
+      }
+      function nextExerciseFactory(key, availableTasks) {
+        const bagKey=`${currentLevel}:${key}`;
+        let state=exerciseFactoryBags.get(bagKey);
+        if (!state || state.remaining.length===0) {
+          const remaining=availableTasks.map((_,index)=>index);
+          for (let index=remaining.length-1;index>0;index-=1) {
+            const swapIndex=Math.floor(Math.random()*(index+1));
+            [remaining[index],remaining[swapIndex]]=[remaining[swapIndex],remaining[index]];
+          }
+          if (state && remaining.length>1 && remaining[remaining.length-1]===state.lastIndex) {
+            [remaining[remaining.length-1],remaining[0]]=[remaining[0],remaining[remaining.length-1]];
+          }
+          state={remaining,lastIndex:state?.lastIndex ?? -1};
+        }
+        const index=state.remaining.pop();
+        state.lastIndex=index; exerciseFactoryBags.set(bagKey,state);
+        return availableTasks[index];
+      }
+      function makeExercise() {
+        const selected=els.topic.value;
+        const key=selected==='all'?choose(Object.keys(topics)):selected;
+        const availableTasks=levelPools[currentLevel][key]||taskPools[key];
+        let task, signature, attempt=0;
+        do {
+          task=nextExerciseFactory(key,availableTasks)();
+          signature=`${currentLevel}:${key}:${task.prompt}:${task.terms.map((item)=>item.value).join('|')}`;
+          attempt+=1;
+        } while(signature===previousKey && attempt<availableTasks.length);
+        previousKey=signature;
+        return {key,task};
+      }
+      function setFormulaFace(visible) {
+        showingFormula = visible;
+        if (visible) els.card.classList.add('is-formula'); else els.card.classList.remove('is-formula');
+        els.flipStage.setAttribute('aria-pressed', String(visible));
+        els.flipStage.setAttribute('aria-label', visible ? 'Return to the exercise question' : `Reveal formula for ${els.formulaTitle.textContent}`);
+        els.questionFace.setAttribute('aria-hidden', String(visible));
+        els.formulaFace.setAttribute('aria-hidden', String(!visible));
+      }
+      function toggleFormulaFace() { setFormulaFace(!showingFormula); }
+      function syncAnswerButton() {
+        els.topicIcon.classList.toggle('is-answer-visible',answerVisible);
+        els.topicIcon.setAttribute('aria-pressed',String(answerVisible));
+        const label=answerVisible?'Hide complete answer':'Reveal complete answer';
+        els.topicIcon.setAttribute('aria-label',label); els.topicIcon.setAttribute('title',label);
+      }
+      function closeAnswerDialog() {
+        if (els.answerDialog.open) els.answerDialog.close();
+        answerVisible=false; syncAnswerButton();
+      }
+      function toggleAnswer() {
+        if (showingFormula) setFormulaFace(false);
+        if (answerVisible) { closeAnswerDialog(); return; }
+        answerVisible=true; syncAnswerButton();
+        els.answerDialog.classList.toggle('is-expanded',els.card.classList.contains('is-expanded'));
+        els.answerDialog.showModal();
+        typesetAnswerMath();
+      }
+      function angleTotalFor(key) { return key === 'complementary' ? 90 : (key === 'vertex' ? 360 : 180); }
+      function parseLinearAngle(expression) {
+        const clean = String(expression).replace(/[°\s]/g,'').replace(/−/g,'-');
+        const pieces = clean.match(/[+-]?[^+-]+/g) || [];
+        let coefficient=0, constant=0, variable='';
+        for (const piece of pieces) {
+          const match=piece.match(/^([+-]?)(?:(\d+(?:\.\d*)?|\.\d+))?([a-z])?$/i);
+          if (!match) return null;
+          const sign=match[1]==='-'?-1:1, numeric=match[2]==null?null:Number(match[2]), letter=match[3]||'';
+          if (letter) { if (variable && variable!==letter) return null; variable=letter; coefficient+=sign*(numeric==null?1:numeric); }
+          else if (numeric!=null) constant+=sign*numeric;
+        }
+        return variable ? {coefficient,constant,variable} : null;
+      }
+      function neatNumber(value) { return String(Math.round(value*10000)/10000); }
+      function formatLinear(coefficient,variable,constant=0) {
+        const coefficientText=Math.abs(coefficient)===1?variable:`${neatNumber(Math.abs(coefficient))}${variable}`;
+        if (constant===0) return `${coefficient<0?'−':''}${coefficientText}`;
+        return `${coefficient<0?'−':''}${coefficientText} ${constant<0?'−':'+'} ${neatNumber(Math.abs(constant))}`;
+      }
+      function renderAlgebraAnswer(task,key) {
+        const expressions=task.terms.map((term)=>term.value);
+        const parsed=expressions.map(parseLinearAngle);
+        if (parsed.some((value)=>!value) || parsed.some((value)=>value.variable!==parsed[0].variable)) return false;
+        const variable=parsed[0].variable, isEquality=task.operators?.includes('=') && parsed.length===2;
+        const total=key==='complementary'?90:((key==='vertex')?360:180);
+        const rows=[];
+        if (isEquality) {
+          const left=parsed[0],right=parsed[1];
+          rows.push({math:`${expressions[0]} = ${expressions[1]}`,action:key==='vertical'?'Set opposite vertical angles equal; they are congruent.':'Set the expressions equal using the angle relationship.'});
+          let coefficient=right.coefficient-left.coefficient, rhs=left.constant-right.constant;
+          if (coefficient<0) { coefficient=-coefficient; rhs=-rhs; }
+          if (left.coefficient!==0 && right.coefficient!==0) {
+            const variableSide=right.coefficient-left.coefficient;
+            const movedConstant=left.constant;
+            rows.push({math:`${neatNumber(movedConstant)} ${variableSide<0?'−':'='} ${formatLinear(variableSide,variable,right.constant)}`,action:`Subtract ${neatNumber(left.coefficient)}${variable} from both sides to collect variable terms.`});
+            const isolatedConstant=left.constant-right.constant;
+            if (right.constant!==0) rows.push({math:`${neatNumber(isolatedConstant)} = ${neatNumber(Math.abs(variableSide))}${variable}`,action:`${right.constant<0?'Add':'Subtract'} ${neatNumber(Math.abs(right.constant))} on both sides.`});
+          } else {
+            rows.push({math:`${formatLinear(coefficient,variable)} = ${neatNumber(rhs)}`,action:'Collect the variable terms and constants while keeping both sides balanced.'});
+          }
+          const solution=coefficient?rhs/coefficient:NaN;
+          if (!Number.isFinite(solution)) return false;
+          rows.push({math:`${variable} = ${neatNumber(solution)}°`,action:coefficient===1?'Isolate the variable.':`Divide both sides by ${neatNumber(coefficient)}.`});
+          const measure=left.coefficient*solution+left.constant;
+          rows.push({math:`Each opposite angle = ${neatNumber(measure)}°`,action:`Substitute ${variable} = ${neatNumber(solution)} into either expression.`});
+        } else {
+          const coefficient=parsed.reduce((sum,item)=>sum+item.coefficient,0);
+          const constant=parsed.reduce((sum,item)=>sum+item.constant,0);
+          const right=total-constant;
+          rows.push({math:`${expressions.join(' + ')} = ${total}°`,action:`Use the ${total}° angle-sum rule to write an equation.`});
+          rows.push({math:`${formatLinear(coefficient,variable,constant)} = ${total}`,action:'Combine like terms and constants.'});
+          if (constant!==0) rows.push({math:`${formatLinear(coefficient,variable)} = ${neatNumber(right)}`,action:`${constant>0?'Subtract':'Add'} ${neatNumber(Math.abs(constant))} from both sides.`});
+          const solution=right/coefficient;
+          if (!Number.isFinite(solution)) return false;
+          rows.push({math:`${variable} = ${neatNumber(solution)}°`,action:coefficient===1?'Isolate the variable.':`Divide both sides by ${neatNumber(coefficient)}.`});
+          const measures=parsed.map((item)=>neatNumber(item.coefficient*solution+item.constant));
+          rows.push({math:`Angle measures: ${measures.join('°, ')}°`,action:`Substitute ${variable} = ${neatNumber(solution)} into each expression and check the total.`});
+        }
+        rows.forEach((step,index)=>appendAnswerStep(step.math,step.action,index));
+        return true;
+      }
+      function renderWorkedAnswer(task,key) {
+        if (window.MathJax?.typesetClear) window.MathJax.typesetClear([els.answerText]);
+        els.answerText.replaceChildren();
+        if (Array.isArray(task.solutionSteps) && task.solutionSteps.length) {
+          task.solutionSteps.forEach((step,index)=>appendAnswerStep(step.math,step.action,index));
+          return;
+        }
+        const terms=task.terms.map((entry)=>entry.value);
+        const numericKnown=terms.filter((value)=>/^\d+(?:\.\d+)?°$/.test(value)).map((value)=>Number(value.replace('°','')));
+        const total=angleTotalFor(key);
+        if (terms.includes('?') && numericKnown.length===terms.length-1) {
+          const knownSum=numericKnown.reduce((a,b)=>a+b,0), missing=total-knownSum;
+          const equation=numericKnown.map((value)=>`${value}°`).join(' + ');
+          const solutionSteps=[[`${equation} + x = ${total}°`,`Use the ${total}° angle-sum rule and substitute each known angle.`]];
+          if(numericKnown.length>1) solutionSteps.push([`${knownSum}° + x = ${total}°`,'Add the known angle measures.']);
+          solutionSteps.push([`x = ${total}° − ${knownSum}° = ${missing}°`,'Subtract the known sum from both sides, then simplify.']);
+          solutionSteps.push([`Check: ${equation} + ${missing}° = ${total}°`,'Substitute the answer to verify the total.']);
+          solutionSteps.forEach((step,index)=>appendAnswerStep(step[0],step[1],index));
+          return;
+        }
+        if (renderAlgebraAnswer(task,key)) return;
+        const lines=String(task.answer||'Use the angle rule to find the unknown measure.').split(/\n/).filter(Boolean);
+        lines.forEach((line,index)=>{
+          const previous=lines[index-1]||'', current=line.trim(); let action;
+          if (/check/i.test(current)) action='Substitute the result into the original equation to verify it.';
+          else if (/vertical|opposite/i.test(current)) action='Use the vertical-angle property: opposite angles have equal measures.';
+          else if (/180°/.test(current)) action='Use the linear-pair property; adjacent angles add to 180°.';
+          else if (index===0 && current.includes('=')) action=key==='vertical'?'Set opposite vertical angles equal.':`Use the ${total}° angle rule to write an equation.`;
+          else if (/^[xyab]\s*=/.test(current) && /\d+[xyab]/.test(previous.replace(/\s/g,''))) { const coeff=(previous.match(/(\d+)[xyab]/)||[])[1]; action=coeff?`Divide both sides by ${coeff} to isolate the variable.`:'Divide both sides by the variable coefficient.'; }
+          else if (/[?]/.test(terms.join(' '))) action='Subtract the known angle measures from the total angle measure.';
+          else if (/measure|angle|angles/i.test(current)) action='Substitute the solved value and state the angle measures.';
+          else if (/ratio/i.test(task.prompt)||/a \+ 2a|a \+ a/i.test(current)) action='Use the stated ratio and the total angle measure.';
+          else action='Simplify the equation while keeping both sides balanced.';
+          appendAnswerStep(line,action,index);
+        });
+      }
+      function appendAnswerStep(math, action, index) {
+        const row = document.createElement('div'); row.className = 'answer-step';
+        const mathText = document.createElement('span'); mathText.className = 'step-math'; mathText.textContent = `${index + 1}. ${math}`;
+        const mathOnly = /^[0-9A-Za-z\s∠°()+\-−×÷=.,:]+$/.test(math) && /[=+×÷]/.test(math) && !/[A-Za-z]{3,}/.test(math);
+        if (mathOnly) {
+          const tex = math.replace(/∠/g,'\\angle ').replace(/°/g,'^{\\circ}').replace(/−/g,'-').replace(/×/g,'\\times ').replace(/÷/g,'\\div ');
+          mathText.dataset.mathTex = tex;
+        }
+        const actionText = document.createElement('span'); actionText.className = 'step-action'; actionText.textContent = action;
+        row.append(mathText,actionText); els.answerText.append(row);
+      }
+      async function typesetAnswerMath() {
+        const mathJax=window.MathJax;
+        if (!mathJax?.typesetPromise) return false;
+        try {
+          if (mathJax.startup?.promise) await mathJax.startup.promise;
+          const nodes=[...els.answerText.querySelectorAll('[data-math-tex]:not([data-tex-rendered])')];
+          nodes.forEach((node)=>{ node.textContent=`\\(${node.dataset.mathTex}\\)`; node.dataset.texRendered='true'; });
+          if (nodes.length) await mathJax.typesetPromise(nodes);
+          return true;
+        } catch (_) { return false; }
+      }
+      function svgNode(name, attributes = {}) {
+        const node = document.createElementNS('http://www.w3.org/2000/svg',name);
+        Object.entries(attributes).forEach(([key,value]) => node.setAttribute(key,String(value)));
+        return node;
+      }
+      function renderDiagram(task,key) {
+        const svg = els.diagram; svg.replaceChildren(); svg.setAttribute('viewBox','0 0 300 250');
+        const defs = svgNode('defs');
+        const marker = svgNode('marker',{id:'ray-arrow',markerWidth:8,markerHeight:8,refX:6,refY:3.5,orient:'auto',markerUnits:'strokeWidth'});
+        marker.append(svgNode('path',{d:'M0,0 L7,3.5 L0,7 Z',fill:'#bce9ff'})); defs.append(marker);
+        const glow = svgNode('radialGradient',{id:'angle-glow'}); glow.append(svgNode('stop',{offset:'0%','stop-color':'#83d7ff','stop-opacity':'.22'}),svgNode('stop',{offset:'100%','stop-color':'#83d7ff','stop-opacity':'0'})); defs.append(glow); svg.append(defs);
+        const enlarged=els.card.classList.contains('is-expanded');
+        const cx=150,cy=127,r=enlarged?116:86,labels=task.terms.map((entry)=>entry.value);
+        svg.append(svgNode('circle',{cx,cy,r:enlarged?132:103,fill:'url(#angle-glow)'}));
+        const drawRay=(angle,color='#bce9ff')=>{ const rad=angle*Math.PI/180; const x=cx+Math.cos(rad)*r, y=cy+Math.sin(rad)*r; svg.append(svgNode('line',{x1:cx,y1:cy,x2:x,y2:y,stroke:color,'stroke-width':2.7,'stroke-linecap':'round','marker-end':'url(#ray-arrow)'})); return {x,y,rad}; };
+        const drawSector=(a1,a2,index)=>{ const rr=enlarged?56:42, p1={x:cx+Math.cos(a1*Math.PI/180)*rr,y:cy+Math.sin(a1*Math.PI/180)*rr}, p2={x:cx+Math.cos(a2*Math.PI/180)*rr,y:cy+Math.sin(a2*Math.PI/180)*rr}; const delta=Math.abs(a2-a1), sweep=a2>=a1?1:0; svg.append(svgNode('path',{d:`M ${cx} ${cy} L ${p1.x} ${p1.y} A ${rr} ${rr} 0 ${delta>180?1:0} ${sweep} ${p2.x} ${p2.y} Z`,fill:index%2?'#9eebd1':'#b8dcff','fill-opacity':'.11',stroke:'#a9e4ff','stroke-opacity':'.18','stroke-width':1})); };
+        const drawLabel=(angle,text,index,count,radius=62)=>{const rad=angle*Math.PI/180,x=cx+Math.cos(rad)*radius,y=cy+Math.sin(rad)*radius; const label=svgNode('text',{x,y,'text-anchor':'middle','dominant-baseline':'middle',fill:text==='?'?'#ffe08c':'#f5fbff','font-size':text.length>8?(enlarged?14:10):(text.length>5?(enlarged?17:12):(enlarged?20:15)),'font-family':'ui-monospace,monospace','font-weight':800,stroke:'#123e6b','stroke-width':3,'paint-order':'stroke'});label.textContent=text;svg.append(label);};
+        let caption='The rays and labels illustrate the angle relationships in the problem.';
+        if(key==='vertex'){
+          const count=Math.max(2,Math.min(5,labels.length)), step=360/count, start=-90;
+          const angles=Array.from({length:count},(_,i)=>start+i*step); angles.forEach((angle)=>drawRay(angle));
+          for(let i=0;i<count;i++){const a=angles[i],b=i===count-1?start+360:angles[i+1];drawSector(a,b,i);drawLabel(a+step/2,labels[i]||'?',i,count,enlarged?82:64);}
+          caption=`${count} adjacent sectors meet around one point: their total is 360°.`;
+        } else if(key==='straight'){
+          const count=Math.max(2,Math.min(5,labels.length)),step=180/count,start=180;
+          const angles=Array.from({length:count+1},(_,i)=>start+i*step);angles.forEach((angle)=>drawRay(angle));
+          for(let i=0;i<count;i++){drawSector(angles[i],angles[i+1],i);drawLabel((angles[i]+angles[i+1])/2,labels[i]||'?',i,count,enlarged?82:64);}
+          caption=`${count} adjacent angles form a straight line and total 180°.`;
+        } else if(key==='vertical'){
+          const rays=[-42,138,42,222];rays.forEach((angle)=>drawRay(angle));
+          const adjacentPair=task.operators?.includes('+');
+          const map=labels.length>=4?labels:(adjacentPair?[labels[0]||'',labels[1]||'','','']:[labels[0]||'','',labels[1]||'','']);
+          const sectors=[[-138,-42],[-42,42],[42,138],[138,222]];
+          sectors.forEach(([start,end],index)=>drawSector(start,end,index));
+          [-90,0,90,180].forEach((angle,index)=>{if(map[index])drawLabel(angle,map[index],index,4,enlarged?80:62);});
+          caption=adjacentPair?'Adjacent angles form a 180° linear pair; each opposite angle matches its partner.':'Opposite vertical angles match; adjacent angles form a straight 180° pair.';
+        } else {
+          const span=key==='complementary'?90:180,count=Math.max(2,labels.length),start=key==='complementary'?-90:180,step=span/count;
+          const angles=Array.from({length:count+1},(_,i)=>start+i*step);angles.forEach((angle)=>drawRay(angle));
+          for(let i=0;i<count;i++){drawSector(angles[i],angles[i+1],i);drawLabel((angles[i]+angles[i+1])/2,labels[i]||'?',i,count,enlarged?82:64);}
+          caption=key==='complementary'?'The two parts complete a 90° right angle.':'The adjacent pair completes a 180° straight angle.';
+        }
+        svg.append(svgNode('circle',{cx,cy,r:4.2,fill:'#fff',stroke:'#9ddcff','stroke-width':2}));
+        caption += ' Diagram is schematic and not to scale.';
+        els.diagramCaption.textContent=caption;
+        svg.setAttribute('aria-label',`${topics[key].name}: ${caption}`);
+      }
+      function renderExercise() {
+        const { key, task } = makeExercise();
+        currentTask=task; currentTopicKey=key;
+        const topic = topics[key];
+        els.topicIcon.textContent = task.topicIcon || topic.icon; els.topicIcon.dataset.topic = key;
+        if (els.answerDialog.open) els.answerDialog.close(); answerVisible=false; syncAnswerButton(); renderWorkedAnswer(task,key); renderDiagram(task,key);
+        els.topicIcon.classList.remove('is-answer-visible'); els.topicIcon.setAttribute('aria-pressed', 'false');
+        els.topicIcon.setAttribute('aria-label', 'Reveal complete answer'); els.topicIcon.setAttribute('title', 'Reveal complete answer');
+        els.topicPill.textContent = task.topicLabel || topic.name;
+        els.formulaTitle.textContent = task.topicLabel || topic.name;
+        els.formulaExpression.textContent = task.formula || topic.formula;
+        els.formulaDescription.textContent = task.formulaNote || topic.formulaNote;
+        setFormulaFace(false);
+        els.count.textContent = `LEVEL ${currentLevel} · ROUND ${String(round).padStart(2, '0')}`;
+        els.kicker.textContent = task.kicker;
+        els.title.textContent = task.title;
+        els.prompt.textContent = task.prompt;
+        els.terms.replaceChildren();
+        task.terms.forEach((item, index) => {
+          const chip = document.createElement('span'); chip.className = 'math-term'; chip.textContent = item.value;
+          els.terms.append(chip);
+          if (index < task.terms.length - 1) { const join = document.createElement('span'); join.className = 'math-joiner'; join.setAttribute('aria-hidden', 'true'); join.textContent = task.operators?.[index] || '+'; els.terms.append(join); }
+        });
+        els.terms.setAttribute('aria-label', `Expressions: ${task.terms.map((item) => item.value).join(', ')}`);
+        els.goal.replaceChildren(document.createTextNode(`${task.goal} `));
+        const strong = document.createElement('strong'); strong.textContent = task.ruleValue || `${topic.sum}.`; els.goal.append(strong);
+        els.content.classList.remove('refreshing'); void els.content.offsetWidth; els.content.classList.add('refreshing');
+        round += 1;
+      }
+      function prepareAlarmAudio() {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        try {
+          if (!alarmAudioContext) alarmAudioContext = new AudioContextClass();
+          if (alarmAudioContext.state === 'suspended') alarmAudioContext.resume().catch(() => {});
+        } catch (_) { alarmAudioContext = null; }
+      }
+      function playTenSecondAlarm() {
+        if (!alarmAudioContext) return;
+        try {
+          const startAt = alarmAudioContext.currentTime;
+          [0, 0.22, 0.44].forEach((delay, index) => {
+            const oscillator = alarmAudioContext.createOscillator();
+            const gain = alarmAudioContext.createGain();
+            const noteStart = startAt + delay;
+            oscillator.type = 'sine';
+            oscillator.frequency.setValueAtTime(760 + index * 70, noteStart);
+            gain.gain.setValueAtTime(0.0001, noteStart);
+            gain.gain.exponentialRampToValueAtTime(0.08, noteStart + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, noteStart + 0.13);
+            oscillator.connect(gain); gain.connect(alarmAudioContext.destination);
+            oscillator.start(noteStart); oscillator.stop(noteStart + 0.14);
+          });
+        } catch (_) { /* The visible warning still works if browser audio is unavailable. */ }
+      }
+      function renderTimer() {
+        const reading = `00:${String(timerRemaining).padStart(2, '0')}`;
+        const states = ['is-running', 'is-paused', 'is-warning', 'is-finished'];
+        states.forEach((state) => els.timer.classList.remove(state));
+        els.timer.setAttribute('aria-pressed', String(timerStatus === 'running'));
+        if (timerStatus === 'idle') {
+          els.timerIcon.textContent = '▶'; els.timerDisplay.textContent = '30s';
+          els.timer.setAttribute('aria-label', 'Start 30-second timer');
+        } else if (timerStatus === 'running') {
+          els.timerIcon.textContent = 'Ⅱ'; els.timerDisplay.textContent = reading;
+          els.timer.classList.add('is-running');
+          if (timerRemaining <= 10) els.timer.classList.add('is-warning');
+          els.timer.setAttribute('aria-label', 'Pause countdown');
+        } else if (timerStatus === 'paused') {
+          els.timerIcon.textContent = '▶'; els.timerDisplay.textContent = reading;
+          els.timer.classList.add('is-paused'); els.timer.setAttribute('aria-label', 'Resume countdown');
+        } else {
+          els.timerIcon.textContent = '↻'; els.timerDisplay.textContent = "Time's up!";
+          els.timer.classList.add('is-finished'); els.timer.setAttribute('aria-label', 'Restart 30-second timer');
+        }
+      }
+      function toggleTimer() {
+        if (timerStatus === 'running') {
+          window.clearInterval(timerInterval); timerInterval = null; timerStatus = 'paused'; renderTimer(); return;
+        }
+        if (timerStatus === 'idle' || timerStatus === 'finished') timerRemaining = 30;
+        prepareAlarmAudio();
+        timerStatus = 'running'; renderTimer();
+        timerInterval = window.setInterval(() => {
+          timerRemaining = Math.max(0, timerRemaining - 1);
+          if (timerRemaining === 0) {
+            window.clearInterval(timerInterval); timerInterval = null; timerStatus = 'finished'; renderTimer(); showToast("Time's up!"); return;
+          }
+          renderTimer();
+          if (timerRemaining === 10) { playTenSecondAlarm(); showToast('10 seconds left!'); }
+        }, 1000);
+      }
+      function showToast(message) {
+        window.clearTimeout(toastTimer); els.toast.textContent = message; els.toast.classList.add('is-visible');
+        toastTimer = window.setTimeout(() => els.toast.classList.remove('is-visible'), 1500);
+      }
+      function syncExpandedState(expanded) {
+        els.card.classList.toggle('is-expanded',expanded);
+        document.body.classList.toggle('has-expanded-exercise',expanded);
+        if (currentTask) renderDiagram(currentTask,currentTopicKey);
+        const label=expanded?'Exit expanded exercise view':'Expand exercise panel to fullscreen';
+        els.expand.setAttribute('aria-pressed',String(expanded));
+        els.expand.setAttribute('aria-label',label); els.expand.title=label; els.expandLabel.textContent=label;
+        els.expand.innerHTML=expanded
+          ? '<svg class="expand-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3v6H3m0-6 6 6m6-6v6h6m0-6-6 6M3 15h6v6m-6 0 6-6m6 6v-6h6m0 6-6-6"/></svg><span class="sr-only" id="expandLabel">Exit expanded exercise view</span>'
+          : '<svg class="expand-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M3 3l6 6M16 3h5v5m0-5-6 6M3 16v5h5m-5 0 6-6m10 1v5h-5m5 0-6-6"/></svg><span class="sr-only" id="expandLabel">Expand exercise panel to fullscreen</span>';
+        els.expandLabel=document.getElementById('expandLabel');
+      }
+      async function toggleExpandedExercise() {
+        const expanded=els.card.classList.contains('is-expanded');
+        if(expanded) {
+          if(document.fullscreenElement===els.card && document.exitFullscreen) {
+            try { await document.exitFullscreen(); } catch (_) { fallbackExpanded=true; syncExpandedState(true); }
+          } else { fallbackExpanded=false; syncExpandedState(false); }
+          return;
+        }
+        if(els.card.requestFullscreen) {
+          try { await els.card.requestFullscreen({navigationUI:'hide'}); fallbackExpanded=false; syncExpandedState(true); return; }
+          catch (_) { /* Use a fixed-position fullscreen panel when the API is unavailable. */ }
+        }
+        fallbackExpanded=true; syncExpandedState(true);
+      }
+      document.addEventListener('fullscreenchange',() => {
+        if(document.fullscreenElement===els.card) syncExpandedState(true);
+        else if(!fallbackExpanded) syncExpandedState(false);
+      });
+      document.addEventListener('keydown',(event) => {
+        if(event.key==='Escape' && answerVisible && els.answerDialog.open) closeAnswerDialog();
+        if(event.key==='Escape' && fallbackExpanded && document.fullscreenElement!==els.card) {
+          fallbackExpanded=false; syncExpandedState(false);
+        }
+      });
+      function setLevel(level) {
+        currentLevel = Math.max(1,Math.min(3,Number(level)||1));
+        els.levelButtons.forEach((button) => {
+          const active = Number(button.dataset.level) === currentLevel;
+          button.classList.toggle('is-active',active); button.setAttribute('aria-pressed',String(active));
+        });
+        previousKey=''; renderExercise();
+      }
+      const interactionTimers = new WeakMap();
+      function replayInteraction(element,className) {
+        if(!element) return;
+        const prior=interactionTimers.get(element); if(prior) window.clearTimeout(prior);
+        element.classList.remove(className); void element.offsetWidth; element.classList.add(className);
+        interactionTimers.set(element,window.setTimeout(()=>{element.classList.remove(className);interactionTimers.delete(element);},720));
+      }
+      function bindInteraction(element,className) {
+        element?.addEventListener('click',()=>replayInteraction(element,className));
+      }
+      els.levelButtons.forEach((button)=>bindInteraction(button,'fx-level'));
+      bindInteraction(document.getElementById('topicSelect'),'fx-topic-select');
+      bindInteraction(els.generate,'fx-generate');
+      bindInteraction(document.getElementById('expandedGenerateBtn'),'fx-generate');
+      bindInteraction(els.timer,'fx-timer');
+      bindInteraction(els.topicIcon,'fx-answer');
+      bindInteraction(els.expand,'fx-expand');
+      bindInteraction(els.answerClose,'fx-close');
+      bindInteraction(els.goalUp,'fx-goal-up');
+      bindInteraction(els.goalDown,'fx-goal-down');
+      bindInteraction(els.reset,'fx-reset');
+      bindInteraction(els.flipStage,'fx-flip');
+      els.flipStage.addEventListener('keydown',(event)=>{if(event.key==='Enter'||event.key===' ') replayInteraction(els.flipStage,'fx-flip');});
+      els.groups.addEventListener('click',(event)=>{const card=event.target.closest('.group-card');if(card&&!card.disabled)replayInteraction(card,'fx-team');});
+      els.levelButtons.forEach((button) => button.addEventListener('click',() => setLevel(button.dataset.level)));
+      els.expand.addEventListener('click', toggleExpandedExercise);
+      document.getElementById('expandedGenerateBtn').addEventListener('click',renderExercise);
+      els.generate.addEventListener('click', renderExercise);
+      els.timer.addEventListener('click', toggleTimer);
+      els.topicIcon.addEventListener('click', toggleAnswer);
+      els.answerClose.addEventListener('click', closeAnswerDialog);
+      els.answerDialog.addEventListener('close',() => { answerVisible=false; syncAnswerButton(); });
+      els.answerDialog.addEventListener('click',(event) => { if(event.target===els.answerDialog) closeAnswerDialog(); });
+      document.getElementById('mathjaxScript')?.addEventListener('load',() => { if(answerVisible) typesetAnswerMath(); });
+      els.goalDown.addEventListener('click', () => changeTarget(-1));
+      els.goalUp.addEventListener('click', () => changeTarget(1));
+      els.flipStage.addEventListener('click', toggleFormulaFace);
+      els.flipStage.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleFormulaFace(); }
+      });
+      els.reset.addEventListener('click', startNewGame);
+      renderGroups();
+      renderExercise();
+      renderTimer();
+    })();
+  </script>
+</body>
+</html>
